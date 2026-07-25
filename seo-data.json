@@ -20,6 +20,27 @@
    "pagespeed_desktop": null,
    "indexnow": "ok",
    "report": "🔮 <b>JinnRadar · SEO-отчёт</b>  2026-07-25\n🌐 Сайт: https://jinnradar.com/\n\n⚡ PageSpeed моб.: <b>None</b>/100\n🖥️ PageSpeed десктоп: <b>None</b>/100\n🧩 On-page SEO: <b>100</b>/100 ✅ всё на месте\n📶 Ответ сайта: HTTP 200 · 1956 мс\n🔔 IndexNow (переобход поисковиками): ok\n\n🛠️ Сегодня сделано автоматически:\n• пинг поисковиков (IndexNow) на переиндексацию\n• обновлён sitemap.xml (lastmod) + отправлен\n• проверено on-page здоровье и скорость\n\n📊 Дашборд: https://jinnradar.com/dashboard.html (пароль jinn2026)"
+  },
+  {
+   "date": "2026-07-25",
+   "ts": "2026-07-25 23:32",
+   "http_status": 200,
+   "response_ms": 1775,
+   "onpage": {
+    "title": true,
+    "description": true,
+    "canonical": true,
+    "og": true,
+    "twitter": true,
+    "jsonld": true,
+    "sitemap": true,
+    "robots": true,
+    "score": 100
+   },
+   "pagespeed_mobile": 96,
+   "pagespeed_desktop": 98,
+   "indexnow": "ok",
+   "report": "🔮 <b>JinnRadar · SEO-отчёт</b>  2026-07-25\n🌐 Сайт: https://jinnradar.com/\n\n⚡ PageSpeed моб.: <b>96</b>/100\n🖥️ PageSpeed десктоп: <b>98</b>/100\n🧩 On-page SEO: <b>100</b>/100 ✅ всё на месте\n📶 Ответ сайта: HTTP 200 · 1775 мс\n🔔 IndexNow (переобход поисковиками): ok\n\n🛠️ Сегодня сделано автоматически:\n• пинг поисковиков (IndexNow) на переиндексацию\n• обновлён sitemap.xml (lastmod) + отправлен\n• проверено on-page здоровье и скорость\n\n📊 Дашборд: https://jinnradar.com/dashboard.html (пароль jinn2026)"
   }
  ]
 }
