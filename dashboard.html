@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>JinnRadar · SEO Dashboard</title>
+<style>
+  :root{--bg:#0a0f1c;--panel:#121a2e;--line:#243250;--text:#e7edf7;--muted:#8aa0c8;--acc:#22ff9b;--warn:#ffcc4d;--bad:#ff6a7a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:1000px;margin:0 auto;padding:20px}
+  h1{font-size:22px;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .gate{max-width:340px;margin:16vh auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;text-align:center}
+  .gate input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0c1424;color:var(--text);margin:12px 0}
+  .gate button{width:100%;padding:12px;border:0;border-radius:10px;background:var(--acc);color:#04120c;font-weight:800;cursor:pointer}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .card .n{font-size:26px;font-weight:800}
+  .card .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .ok{color:var(--acc)} .mid{color:var(--warn)} .bad{color:var(--bad)}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  .panel h2{font-size:15px;margin:0 0 12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600}
+  .rep{white-space:pre-wrap;font-family:Consolas,monospace;font-size:13px;color:#cdd8ee;line-height:1.5}
+  canvas{width:100%;height:120px}
+  @media(max-width:700px){.cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="gate" class="gate">
+  <div style="font-size:30px">🔮📊</div>
+  <div style="font-weight:800;margin-top:6px">SEO Dashboard</div>
+  <input id="pw" type="password" placeholder="Пароль" onkeydown="if(event.key==='Enter')unlock()"/>
+  <button onclick="unlock()">Войти</button>
+</div>
+
+<div id="app" class="wrap" style="display:none">
+  <h1>JinnRadar · SEO Dashboard</h1>
+  <div class="sub">jinnradar.com · обновляется ежедневно в 09:00</div>
+
+  <div class="cards">
+    <div class="card"><div class="n" id="psm">—</div><div class="l">PageSpeed моб.</div></div>
+    <div class="card"><div class="n" id="psd">—</div><div class="l">PageSpeed десктоп</div></div>
+    <div class="card"><div class="n" id="onp">—</div><div class="l">On-page SEO</div></div>
+    <div class="card"><div class="n" id="upt">—</div><div class="l">Ответ сайта</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>PageSpeed (моб.) — динамика</h2>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="panel">
+    <h2>Последний отчёт</h2>
+    <div class="rep" id="report">Загрузка…</div>
+  </div>
+
+  <div class="panel">
+    <h2>История проверок</h2>
+    <table id="hist"><thead><tr><th>Дата</th><th>Моб.</th><th>Десктоп</th><th>On-page</th><th>HTTP</th><th>Ответ</th><th>IndexNow</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+
+<script>
+function unlock(){
+  const v=document.getElementById('pw').value.trim();
+  if(v==='jinn2026'){ localStorage.setItem('seoauth','1'); show(); }
+  else { document.getElementById('pw').value=''; document.getElementById('pw').placeholder='Неверный пароль'; }
+}
+function cls(v){return v>=90?'ok':v>=50?'mid':'bad'}
+async function show(){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+  let data={history:[]};
+  try{ data=await (await fetch('seo-data.json?'+Date.now())).json(); }catch(e){}
+  const h=data.history||[];
+  const last=h[h.length-1];
+  if(last){
+    const psm=document.getElementById('psm'); psm.textContent=last.pagespeed_mobile??'—'; psm.className='n '+cls(last.pagespeed_mobile||0);
+    const psd=document.getElementById('psd'); psd.textContent=last.pagespeed_desktop??'—'; psd.className='n '+cls(last.pagespeed_desktop||0);
+    const onp=document.getElementById('onp'); const os=(last.onpage&&last.onpage.score)||0; onp.textContent=os; onp.className='n '+cls(os);
+    document.getElementById('upt').textContent=(last.http_status||'—')+' · '+(last.response_ms||'—')+'мс';
+    document.getElementById('report').textContent=last.report||'—';
+  }
+  // таблица
+  const tb=document.querySelector('#hist tbody'); tb.innerHTML='';
+  h.slice(-30).reverse().forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.date}</td><td>${r.pagespeed_mobile??'—'}</td><td>${r.pagespeed_desktop??'—'}</td><td>${(r.onpage&&r.onpage.score)||'—'}</td><td>${r.http_status||'—'}</td><td>${r.response_ms||'—'}мс</td><td>${r.indexnow||'—'}</td>`;
+    tb.appendChild(tr);
+  });
+  // график
+  const c=document.getElementById('chart'),ctx=c.getContext('2d');
+  c.width=c.clientWidth*2; c.height=240;
+  const vals=h.slice(-30).map(r=>r.pagespeed_mobile||0);
+  if(vals.length){
+    const w=c.width,ht=c.height,pad=20,mx=100;
+    ctx.strokeStyle='#22ff9b';ctx.lineWidth=3;ctx.beginPath();
+    vals.forEach((v,i)=>{const x=pad+(w-2*pad)*(i/(Math.max(1,vals.length-1)));const y=ht-pad-(ht-2*pad)*(v/mx);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.stroke();
+    ctx.fillStyle='#22ff9b';vals.forEach((v,i)=>{const x=pad+(w-2*pad)*(i/(Math.max(1,vals.length-1)));const y=ht-pad-(ht-2*pad)*(v/mx);ctx.beginPath();ctx.arc(x,y,4,0,7);ctx.fill();});
+  }
+}
+if(localStorage.getItem('seoauth')==='1') show();
+</script>
+</body>
+</html>
