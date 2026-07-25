@@ -200,6 +200,14 @@ document.getElementById('year').textContent=new Date().getFullYear();
   function tick(){el.textContent=pop().toLocaleString('ru-RU');}
   tick();setInterval(tick,1500);})();
 
+/* ---------- счётчик посещений (для KPI-отчёта продвижения) ---------- */
+(function(){try{
+  if(sessionStorage.getItem('jrh'))return; sessionStorage.setItem('jrh','1');
+  var A='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3em1jaWh3dHdnamFqampzYm1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTQ0MzksImV4cCI6MjA5MTA3MDQzOX0.X4UnLTta5Pm70sOwZkwJgvA8EkQtJPDmsn-2dMlkqjA';
+  fetch('https://zwzmcihwtwgjajjjsbms.supabase.co/rest/v1/rpc/jr_hit',{method:'POST',
+    headers:{'apikey':A,'Authorization':'Bearer '+A,'Content-Type':'application/json'},body:'{}'});
+}catch(e){}})();
+
 /* ---------- звук сонара ---------- */
 let actx=null,muted=false;
 function initAudio(){if(actx)return;try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
