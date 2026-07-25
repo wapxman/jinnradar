@@ -4,9 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>JinnRadar — сонар джиннов 🔮📡</title>
-<meta name="description" content="Сонар джиннов как на подводной лодке: ты в центре, луч сканирует пространство и находит джиннов вокруг. Развлекательный проект по мотивам исламских преданий." />
+<meta name="description" content="Сонар джиннов как на подводной лодке: ты в центре, луч сканирует пространство. Идёшь — радар следит за тобой по GPS, и джинны смещаются." />
 <meta property="og:title" content="JinnRadar — сонар джиннов" />
-<meta property="og:description" content="Включи сонар и посмотри, сколько джиннов движется вокруг тебя прямо сейчас." />
+<meta property="og:description" content="Включи сонар и посмотри, сколько джиннов движется вокруг тебя. Радар следит за твоим GPS." />
 <meta property="og:type" content="website" />
 
 <!-- Google AdSense: замените ca-pub-XXXXXXXXXXXXXXXX на ваш ID издателя -->
@@ -37,12 +37,11 @@
 
   .hero{padding:22px 0 6px;text-align:center}
   .hero h1{margin:0 0 6px;font-size:24px;text-shadow:0 0 14px #22ff9b44}
-  .hero p{margin:0 auto;color:var(--muted);font-size:13px;max-width:520px}
+  .hero p{margin:0 auto;color:var(--muted);font-size:13px;max-width:540px}
 
   .radarbox{position:relative;margin:16px auto 0;width:min(92vw,560px);aspect-ratio:1/1}
   #radar{width:100%;height:100%;display:block;border-radius:50%;
     box-shadow:0 0 60px #0bff9a22, inset 0 0 80px #001f14}
-  /* CRT-сканлайны поверх */
   .scan{position:absolute;inset:0;border-radius:50%;pointer-events:none;
     background:repeating-linear-gradient(0deg,#00000000 0 2px,#00120b55 2px 4px);mix-blend-mode:overlay}
   .startlay{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;
@@ -56,6 +55,7 @@
   .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;
     padding:7px 14px;font-size:13px}
   .chip b{color:var(--acc)}
+  #trk.live{border-color:var(--acc);color:var(--acc);box-shadow:0 0 14px #22ff9b33}
   .mutebtn{background:var(--panel);border:1px solid var(--line);color:var(--text);
     border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer}
 
@@ -78,7 +78,6 @@
     border-radius:14px;display:grid;place-items:center;color:#3f7a5f;font-size:13px}
 
   footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 0 40px;color:var(--muted);font-size:12px}
-  .disc{background:#06291b;border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 0 12px;color:#9fd0ba}
 
   @media(max-width:620px){.grid2{grid-template-columns:1fr}.hero h1{font-size:20px}}
 </style>
@@ -98,8 +97,8 @@
 <main class="wrap">
   <div class="hero">
     <h1>Сонар джиннов 📡🔮</h1>
-    <p>Ты — в центре. Луч сонара сканирует пространство и ловит джиннов, которые движутся вокруг тебя.
-       Проект развлекательный, по мотивам исламских преданий.</p>
+    <p>Ты — в центре. Луч сканирует пространство и ловит джиннов вокруг.
+       Идёшь — радар <b>следит за тобой по GPS</b>, и джинны смещаются, как на настоящем сонаре.</p>
   </div>
 
   <div class="radarbox">
@@ -108,15 +107,16 @@
     <div class="startlay" id="startlay">
       <div>
         <div class="b">📡 Запустить сонар</div>
-        <small>определим твою позицию и включим звук</small>
+        <small>разреши геолокацию — радар будет следить за тобой</small>
       </div>
     </div>
   </div>
 
   <div class="hud">
     <div class="chip">Контактов: <b id="nNear">—</b></div>
-    <div class="chip">Движутся: <b id="nMove">—</b></div>
     <div class="chip">Сильных: <b id="nStrong">—</b></div>
+    <div class="chip">Скорость: <b id="spd">0</b> км/ч</div>
+    <div class="chip" id="trk">🛰️ жду GPS…</div>
     <button class="mutebtn" id="mute">🔊 Звук вкл</button>
   </div>
 
@@ -157,15 +157,13 @@
 </main>
 
 <footer>
-  <div class="wrap">
-    © <span id="year"></span> JinnRadar
-  </div>
+  <div class="wrap">© <span id="year"></span> JinnRadar</div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
-/* глобальный счётчик: стартует с 8 млрд, медленно и ТОЛЬКО растёт (сохраняется между заходами) */
+/* счётчик: с 8 млрд, медленно и только растёт (сохраняется) */
 (function(){const el=document.getElementById('globalCount');
   let pop=parseInt(localStorage.getItem('jinnPop')||'8000000000',10);
   if(!(pop>=8000000000)) pop=8000000000;
@@ -173,24 +171,22 @@ document.getElementById('year').textContent = new Date().getFullYear();
     try{localStorage.setItem('jinnPop',pop)}catch(e){}}
   tick();setInterval(tick,2500)})();
 
-/* ---------- аудио сонара (Web Audio) ---------- */
+/* ---------- звук сонара ---------- */
 let actx=null, muted=false;
 function initAudio(){ if(actx) return; try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} }
 function ping(freq,dur,vol){
   if(!actx||muted) return;
-  const t=actx.currentTime;
-  const o=actx.createOscillator(), g=actx.createGain();
+  const t=actx.currentTime, o=actx.createOscillator(), g=actx.createGain();
   o.type='sine'; o.frequency.setValueAtTime(freq,t);
   o.frequency.exponentialRampToValueAtTime(Math.max(60,freq*0.55),t+dur);
-  g.gain.setValueAtTime(0.0001,t);
-  g.gain.exponentialRampToValueAtTime(vol,t+0.015);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.015);
   g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
   o.connect(g).connect(actx.destination); o.start(t); o.stop(t+dur+0.02);
 }
-const sonarPing=()=>ping(660,1.1,0.22);      // основной «пинг» за оборот
-const contactBlip=()=>ping(1350,0.10,0.06);  // короткий блип при обнаружении
+const sonarPing=()=>ping(660,1.1,0.22);
+const contactBlip=()=>ping(1350,0.10,0.06);
 
-/* ---------- джинны ---------- */
+/* ---------- джинны (реальные координаты) ---------- */
 const TYPES=[
   {nm:'Джинн',  emoji:'🧞', strong:false, w:50},
   {nm:'Шайтан', emoji:'😈', strong:false, w:16},
@@ -202,82 +198,94 @@ const NAMES=['Зубайр','Харис','Даджал','Самум','Азази
   'Васвас','Зафар','Хумам','Кабус','Насир','Джанан','Барзах','Тарик','Гассан','Заид','Фахир','Ханзала','Икрам','Сухайль'];
 function pickType(){let x=Math.random()*TYPES.reduce((s,t)=>s+t.w,0);for(const t of TYPES){if((x-=t.w)<0)return t}return TYPES[0]}
 
-const N=90;                     // плотность — много джиннов
+const MAX_KM=3;           // внешнее кольцо = 3 км
+const N=90;
+
+/* пользователь (обновляется по GPS) */
+const user={lat:41.311,lng:69.279,haveFix:false,speed:0,lastT:0};
+
+/* гео-хелперы */
+const toRad=d=>d*Math.PI/180, toDeg=r=>r*180/Math.PI;
+function haversineKm(la1,ln1,la2,ln2){
+  const R=6371,dLa=toRad(la2-la1),dLn=toRad(ln2-ln1);
+  const a=Math.sin(dLa/2)**2+Math.cos(toRad(la1))*Math.cos(toRad(la2))*Math.sin(dLn/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+function bearingRad(la1,ln1,la2,ln2){ // 0=север, по часовой
+  const y=Math.sin(toRad(ln2-ln1))*Math.cos(toRad(la2));
+  const x=Math.cos(toRad(la1))*Math.sin(toRad(la2))-Math.sin(toRad(la1))*Math.cos(toRad(la2))*Math.cos(toRad(ln2-ln1));
+  return Math.atan2(y,x);
+}
+function destPoint(lat,lng,brgRad,distKm){ // точка на расстоянии/азимуте
+  const dLat=(distKm*Math.cos(brgRad))/111.32;
+  const dLng=(distKm*Math.sin(brgRad))/(111.32*Math.cos(toRad(lat)));
+  return {lat:lat+dLat,lng:lng+dLng};
+}
+
 const blips=[];
-function makeBlip(){
+function spawnBlip(baseLat,baseLng,edge){
+  const brg=Math.random()*2*Math.PI;
+  const dist=(edge? (0.7+Math.random()*0.3) : (0.1+Math.random()*0.88))*MAX_KM;
+  const pt=destPoint(baseLat,baseLng,brg,dist);
+  const vKmh=0.4+Math.random()*2.6;               // собственная скорость джинна
+  const vbrg=Math.random()*2*Math.PI;
   return {
-    ang:Math.random()*Math.PI*2,          // азимут (радианы)
-    r:0.06+Math.random()*0.92,            // радиус 0..1
-    va:(Math.random()-0.5)*0.0052,        // угловая скорость (движение) — медленнее
-    vr:(Math.random()-0.5)*0.0008,        // радиальная скорость — медленнее
-    t:pickType(),
-    muslim:Math.random()<0.42,
+    lat:pt.lat, lng:pt.lng,
+    vlat:(vKmh/3600)*Math.cos(vbrg)/111.32,        // град/сек
+    vlng:(vKmh/3600)*Math.sin(vbrg)/(111.32*Math.cos(toRad(pt.lat))),
+    t:pickType(), muslim:Math.random()<0.42,
     name:NAMES[Math.floor(Math.random()*NAMES.length)],
-    lit:0,                                // подсветка после прохода луча (0..1)
-    seen:false
+    lit:0, seen:false, sa:0, r:1
   };
 }
-for(let i=0;i<N;i++) blips.push(makeBlip());
+function seedBlips(lat,lng){ blips.length=0; for(let i=0;i<N;i++) blips.push(spawnBlip(lat,lng,false)); }
 
 /* ---------- canvas ---------- */
 const cv=document.getElementById('radar'), ctx=cv.getContext('2d');
 let W=0,H=0,cx=0,cy=0,R=0,dpr=Math.min(window.devicePixelRatio||1,2);
-function resize(){
-  const rect=cv.getBoundingClientRect();
-  W=Math.round(rect.width*dpr); H=Math.round(rect.height*dpr);
-  cv.width=W; cv.height=H; cx=W/2; cy=H/2; R=Math.min(W,H)/2-6*dpr;
-}
+function resize(){const rect=cv.getBoundingClientRect();
+  W=Math.round(rect.width*dpr);H=Math.round(rect.height*dpr);
+  cv.width=W;cv.height=H;cx=W/2;cy=H/2;R=Math.min(W,H)/2-6*dpr;}
 window.addEventListener('resize',resize);
 
-let sweep=-Math.PI/2;           // текущий угол луча
-let prevSweep=sweep;
-let running=false, last=0;
+let sweep=-Math.PI/2, prevSweep=sweep, running=false, last=0;
 const G='#22ff9b';
 
 function drawGrid(){
   ctx.save();
-  // фон
   const grd=ctx.createRadialGradient(cx,cy,R*0.05,cx,cy,R);
-  grd.addColorStop(0,'#0a3d29'); grd.addColorStop(1,'#021b12');
-  ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
-  // кольца дальности
-  ctx.strokeStyle='rgba(34,255,155,0.28)'; ctx.lineWidth=1*dpr;
+  grd.addColorStop(0,'#0a3d29');grd.addColorStop(1,'#021b12');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fill();
+  ctx.strokeStyle='rgba(34,255,155,0.28)';ctx.lineWidth=1*dpr;
   for(let i=1;i<=4;i++){ctx.beginPath();ctx.arc(cx,cy,R*i/4,0,7);ctx.stroke();}
-  // линии азимута
   ctx.strokeStyle='rgba(34,255,155,0.16)';
-  for(let a=0;a<12;a++){const an=a*Math.PI/6;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(an)*R,cy+Math.sin(an)*R);ctx.stroke();}
-  // обод
+  for(let a=0;a<12;a++){const an=a*Math.PI/6;ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(an)*R,cy+Math.sin(an)*R);ctx.stroke();}
   ctx.strokeStyle='rgba(34,255,155,0.5)';ctx.lineWidth=2*dpr;
   ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();
-  // метки N/E/S/W
-  ctx.fillStyle='rgba(34,255,155,0.6)';ctx.font=`${12*dpr}px Consolas,monospace`;
-  ctx.textAlign='center';ctx.textBaseline='middle';
+  // метки км на кольцах
+  ctx.fillStyle='rgba(34,255,155,0.4)';ctx.font=`${9*dpr}px Consolas,monospace`;
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  for(let i=1;i<=4;i++){ctx.fillText((MAX_KM*i/4).toFixed(2)+' км',cx+3*dpr,cy-R*i/4);}
+  // С/В/Ю/З
+  ctx.fillStyle='rgba(34,255,155,0.6)';ctx.font=`${12*dpr}px Consolas,monospace`;ctx.textAlign='center';
   ctx.fillText('С',cx,cy-R+11*dpr);ctx.fillText('Ю',cx,cy+R-11*dpr);
   ctx.fillText('В',cx+R-11*dpr,cy);ctx.fillText('З',cx-R+11*dpr,cy);
   ctx.restore();
 }
 function drawSweep(){
-  ctx.save();
-  ctx.translate(cx,cy);
-  // затухающий сектор позади луча
-  const steps=42, span=Math.PI*0.62;
-  for(let i=0;i<steps;i++){
-    const a=sweep-(i/steps)*span;
-    const alpha=(1-i/steps)*0.22;
-    ctx.strokeStyle=`rgba(34,255,155,${alpha})`;
-    ctx.lineWidth=2*dpr;
-    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*R,Math.sin(a)*R);ctx.stroke();
-  }
-  // яркая ведущая линия
-  ctx.strokeStyle=G; ctx.lineWidth=2.5*dpr; ctx.shadowColor=G; ctx.shadowBlur=14*dpr;
+  ctx.save();ctx.translate(cx,cy);
+  const steps=42,span=Math.PI*0.62;
+  for(let i=0;i<steps;i++){const a=sweep-(i/steps)*span,alpha=(1-i/steps)*0.22;
+    ctx.strokeStyle=`rgba(34,255,155,${alpha})`;ctx.lineWidth=2*dpr;
+    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*R,Math.sin(a)*R);ctx.stroke();}
+  ctx.strokeStyle=G;ctx.lineWidth=2.5*dpr;ctx.shadowColor=G;ctx.shadowBlur=14*dpr;
   ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(sweep)*R,Math.sin(sweep)*R);ctx.stroke();
   ctx.restore();
 }
 function drawCenter(){
-  ctx.save();
-  const pr=(Math.sin(Date.now()/380)*0.5+0.5);
-  ctx.fillStyle=G; ctx.shadowColor=G; ctx.shadowBlur=16*dpr;
+  ctx.save();const pr=(Math.sin(Date.now()/380)*0.5+0.5);
+  ctx.fillStyle=G;ctx.shadowColor=G;ctx.shadowBlur=16*dpr;
   ctx.beginPath();ctx.arc(cx,cy,4.5*dpr,0,7);ctx.fill();
   ctx.strokeStyle=`rgba(34,255,155,${0.5-pr*0.4})`;ctx.lineWidth=2*dpr;ctx.shadowBlur=0;
   ctx.beginPath();ctx.arc(cx,cy,(8+pr*10)*dpr,0,7);ctx.stroke();
@@ -288,99 +296,99 @@ function drawCenter(){
 function angDiff(a,b){let d=(a-b)%(Math.PI*2);if(d<-Math.PI)d+=Math.PI*2;if(d>Math.PI)d-=Math.PI*2;return d}
 
 let logQ=[], lastLog=0;
-function pushLog(b){
-  const brg=Math.round((b.ang*180/Math.PI+90+360)%360);
-  const km=(b.r*3).toFixed(2);
-  logQ.unshift(`<div class="ln">▸ КОНТАКТ: <b>${b.t.emoji} ${b.name}</b> · ${b.t.nm} · ${b.muslim?'муслим':'кафир'} · азимут ${brg}° · ${km} км</div>`);
+function pushLog(b,km){
+  const brg=Math.round((toDeg(bearingRad(user.lat,user.lng,b.lat,b.lng))+360)%360);
+  logQ.unshift(`<div class="ln">▸ КОНТАКТ: <b>${b.t.emoji} ${b.name}</b> · ${b.t.nm} · ${b.muslim?'муслим':'кафир'} · азимут ${brg}° · ${km.toFixed(2)} км</div>`);
   if(logQ.length>7) logQ.pop();
   document.getElementById('log').innerHTML=logQ.join('');
 }
 
 function drawBlips(){
-  let detThisFrame=0;
+  let det=0;
   for(const b of blips){
-    const x=cx+Math.cos(b.ang)*b.r*R, y=cy+Math.sin(b.ang)*b.r*R;
-    // прошёл ли луч через контакт с прошлого кадра?
-    const d1=angDiff(prevSweep,b.ang), d2=angDiff(sweep,b.ang);
-    if(d1<0 && d2>=0 && Math.abs(d2)<0.3){
-      b.lit=1; detThisFrame++;
-      if(!b.seen || Math.random()<0.15){ pushLog(b); b.seen=true; }
-    }
-    const base=0.16, a=Math.min(1, base+b.lit*0.9);
-    const rad=(b.t.strong?3.4:2.6)*dpr*(1+b.lit*0.7);
+    const km=haversineKm(user.lat,user.lng,b.lat,b.lng);
+    if(km>MAX_KM*1.25){ Object.assign(b,spawnBlip(user.lat,user.lng,true)); continue; }
+    const sa=bearingRad(user.lat,user.lng,b.lat,b.lng)-Math.PI/2;   // экранный угол
+    const r=Math.min(1,km/MAX_KM);
+    b.sa=sa; b.r=r;
+    const x=cx+Math.cos(sa)*r*R, y=cy+Math.sin(sa)*r*R;
+    const d1=angDiff(prevSweep,sa), d2=angDiff(sweep,sa);
+    if(d1<0 && d2>=0 && Math.abs(d2)<0.3){ b.lit=1; det++;
+      if(!b.seen||Math.random()<0.15){ pushLog(b,km); b.seen=true; } }
+    const a=Math.min(1,0.16+b.lit*0.9), rad=(b.t.strong?3.4:2.6)*dpr*(1+b.lit*0.7);
     ctx.save();
-    ctx.fillStyle=`rgba(34,255,155,${a})`;
-    ctx.shadowColor=G; ctx.shadowBlur=(4+b.lit*14)*dpr;
+    ctx.fillStyle=`rgba(34,255,155,${a})`;ctx.shadowColor=G;ctx.shadowBlur=(4+b.lit*14)*dpr;
     ctx.beginPath();ctx.arc(x,y,rad,0,7);ctx.fill();
-    // при ярком проходе — эмодзи+имя
-    if(b.lit>0.55){
-      ctx.globalAlpha=(b.lit-0.55)/0.45;
-      ctx.shadowBlur=0;
-      ctx.font=`${13*dpr}px "Segoe UI Emoji",sans-serif`;ctx.textAlign='center';
-      ctx.fillText(b.t.emoji,x,y-10*dpr);
-      ctx.fillStyle='rgba(34,255,155,0.9)';ctx.font=`${9*dpr}px Consolas,monospace`;
-      ctx.fillText(b.name,x,y+12*dpr);
-    }
+    if(b.lit>0.55){ ctx.globalAlpha=(b.lit-0.55)/0.45;ctx.shadowBlur=0;
+      ctx.font=`${13*dpr}px "Segoe UI Emoji",sans-serif`;ctx.textAlign='center';ctx.fillText(b.t.emoji,x,y-10*dpr);
+      ctx.fillStyle='rgba(34,255,155,0.9)';ctx.font=`${9*dpr}px Consolas,monospace`;ctx.fillText(b.name,x,y+12*dpr);}
     ctx.restore();
   }
-  if(detThisFrame>0 && Date.now()-lastLog>90){ contactBlip(); lastLog=Date.now(); }
+  if(det>0 && Date.now()-lastLog>90){ contactBlip(); lastLog=Date.now(); }
 }
 
 function updateHUD(){
   document.getElementById('nNear').textContent=blips.length;
-  document.getElementById('nMove').textContent=blips.filter(b=>Math.abs(b.va)>0.004||Math.abs(b.vr)>0.0007).length;
   document.getElementById('nStrong').textContent=blips.filter(b=>b.t.strong).length;
+  document.getElementById('spd').textContent=(user.speed||0).toFixed(1);
 }
 
 function frame(ts){
   if(!running) return;
   const dt=Math.min(50,ts-last)||16; last=ts;
-  prevSweep=sweep;
-  sweep+=dt*0.00105;                     // скорость вращения луча — медленнее
-  // пинг за оборот (когда луч пересекает верх, азимут -90°)
+  prevSweep=sweep; sweep+=dt*0.00105;
   const target=-Math.PI/2;
   if(angDiff(prevSweep,target)<0 && angDiff(sweep,target)>=0) sonarPing();
   if(sweep>Math.PI) sweep-=Math.PI*2;
-
-  // движение джиннов
+  // движение джиннов (собственное)
   for(const b of blips){
-    b.ang+=b.va*dt/16;
-    b.r+=b.vr*dt/16;
-    if(b.r<0.05){b.r=0.05;b.vr=Math.abs(b.vr)}
-    if(b.r>0.98){b.r=0.98;b.vr=-Math.abs(b.vr)}
-    if(Math.random()<0.004){b.va+=(Math.random()-0.5)*0.002}
-    b.lit*=0.955;                         // затухание подсветки
+    b.lat+=b.vlat*dt/1000; b.lng+=b.vlng*dt/1000; b.lit*=0.955;
+    if(Math.random()<0.003){const vb=Math.random()*2*Math.PI,vk=0.4+Math.random()*2.6;
+      b.vlat=(vk/3600)*Math.cos(vb)/111.32; b.vlng=(vk/3600)*Math.sin(vb)/(111.32*Math.cos(toRad(b.lat)));}
   }
-
   ctx.clearRect(0,0,W,H);
-  drawGrid(); drawSweep(); drawBlips(); drawCenter();
+  drawGrid();drawSweep();drawBlips();drawCenter();
   requestAnimationFrame(frame);
+}
+
+/* ---------- GPS-слежение ---------- */
+let watchId=null, prevFix=null;
+function onFix(p){
+  const la=p.coords.latitude, ln=p.coords.longitude, tnow=p.timestamp||Date.now();
+  if(!user.haveFix){ user.haveFix=true; seedBlips(la,ln); }         // первый фикс — расставить джиннов
+  // скорость: из GPS, иначе по перемещению
+  let spd=(p.coords.speed!=null && !isNaN(p.coords.speed))? p.coords.speed*3.6 : null; // км/ч
+  if(spd==null && prevFix){ const dkm=haversineKm(prevFix.la,prevFix.ln,la,ln);
+    const dh=(tnow-prevFix.t)/3600000; if(dh>0) spd=dkm/dh; }
+  let s=Math.max(0, spd||0);
+  if(s>250) s=user.speed;                                  // игнор GPS-скачков
+  user.speed = user.speed? user.speed*0.6+s*0.4 : s;       // сглаживание
+  user.lat=la; user.lng=ln;                                          // ← двигаемся: контакты сместятся
+  prevFix={la,ln,t:tnow};
+  const trk=document.getElementById('trk');
+  trk.classList.add('live'); trk.textContent='🛰️ слежу за тобой';
+  updateHUD();
+}
+function onFixErr(){ const trk=document.getElementById('trk'); trk.textContent='🛰️ GPS недоступен'; }
+function startTracking(){
+  if(!navigator.geolocation){ onFixErr(); return; }
+  navigator.geolocation.getCurrentPosition(onFix,onFixErr,{enableHighAccuracy:true,timeout:8000});
+  watchId=navigator.geolocation.watchPosition(onFix,onFixErr,{enableHighAccuracy:true,maximumAge:1000,timeout:15000});
 }
 
 /* ---------- запуск ---------- */
-function startRadar(){
-  resize(); running=true; last=performance.now();
-  requestAnimationFrame(frame);
-  updateHUD();
-}
+function startRadar(){ resize(); if(!user.haveFix) seedBlips(user.lat,user.lng);
+  running=true; last=performance.now(); requestAnimationFrame(frame); updateHUD(); }
 document.getElementById('startlay').addEventListener('click',function(){
   this.classList.add('hide');
   initAudio(); if(actx&&actx.state==='suspended')actx.resume();
-  // геолокация — «определяем позицию» (радар абстрактный, ты всегда в центре)
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      p=>{ startRadar(); },
-      ()=>{ startRadar(); },
-      {enableHighAccuracy:true,timeout:6000}
-    );
-  } else startRadar();
+  startTracking(); startRadar();
 });
-
 document.getElementById('mute').addEventListener('click',function(){
   muted=!muted; this.textContent=muted?'🔇 Звук выкл':'🔊 Звук вкл';
 });
 
-/* нарисовать статичный радар до старта (за оверлеем) */
+/* статичный кадр до старта */
 resize(); ctx.clearRect(0,0,W,H); drawGrid(); drawCenter();
 </script>
 </body>
