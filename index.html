@@ -4,67 +4,46 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>JinnRadar — сонар джиннов 🔮📡</title>
-<meta name="description" content="Сонар джиннов как на подводной лодке: ты в центре, луч сканирует пространство. Идёшь — радар следит за тобой по GPS, и джинны смещаются." />
+<meta name="description" content="Сонар джиннов: ты в центре, луч сканирует пространство. Мир единый — два человека рядом видят одних и тех же джиннов. Радар следит за тобой по GPS." />
 <meta property="og:title" content="JinnRadar — сонар джиннов" />
-<meta property="og:description" content="Включи сонар и посмотри, сколько джиннов движется вокруг тебя. Радар следит за твоим GPS." />
+<meta property="og:description" content="Единый мир джиннов: у всех рядом — одинаково. Включи сонар и следи за движением." />
 <meta property="og:type" content="website" />
 
 <!-- Google AdSense: замените ca-pub-XXXXXXXXXXXXXXXX на ваш ID издателя -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
 <style>
-  :root{
-    --bg:#02100b; --panel:#07231699; --line:#0f4d34; --text:#c8ffe6;
-    --muted:#5fae86; --acc:#22ff9b; --dim:#0b3d29;
-  }
+  :root{--bg:#02100b;--panel:#07231699;--line:#0f4d34;--text:#c8ffe6;--muted:#5fae86;--acc:#22ff9b;--dim:#0b3d29;}
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-    font-family:"Segoe UI",-apple-system,Roboto,sans-serif}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",-apple-system,Roboto,sans-serif}
   a{color:var(--acc)}
   .wrap{max-width:1000px;margin:0 auto;padding:0 16px}
-
-  header{position:sticky;top:0;z-index:1000;background:linear-gradient(180deg,#02100b 65%,#02100bcc);
-    border-bottom:1px solid var(--line)}
+  header{position:sticky;top:0;z-index:1000;background:linear-gradient(180deg,#02100b 65%,#02100bcc);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;gap:12px;height:58px}
-  .logo{font-weight:800;font-size:19px;letter-spacing:.5px;display:flex;align-items:center;gap:8px;
-    text-shadow:0 0 10px #22ff9b66}
-  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);
-    box-shadow:0 0 12px var(--acc);animation:pulse 1.6s infinite}
+  .logo{font-weight:800;font-size:19px;letter-spacing:.5px;display:flex;align-items:center;gap:8px;text-shadow:0 0 10px #22ff9b66}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);animation:pulse 1.6s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
   .counter{margin-left:auto;text-align:right;line-height:1.1}
   .counter b{font-variant-numeric:tabular-nums;font-size:14px;color:var(--acc);text-shadow:0 0 8px #22ff9b55}
   .counter span{display:block;font-size:10px;color:var(--muted)}
-
   .hero{padding:22px 0 6px;text-align:center}
   .hero h1{margin:0 0 6px;font-size:24px;text-shadow:0 0 14px #22ff9b44}
-  .hero p{margin:0 auto;color:var(--muted);font-size:13px;max-width:540px}
-
+  .hero p{margin:0 auto;color:var(--muted);font-size:13px;max-width:560px}
   .radarbox{position:relative;margin:16px auto 0;width:min(92vw,560px);aspect-ratio:1/1}
-  #radar{width:100%;height:100%;display:block;border-radius:50%;
-    box-shadow:0 0 60px #0bff9a22, inset 0 0 80px #001f14}
-  .scan{position:absolute;inset:0;border-radius:50%;pointer-events:none;
-    background:repeating-linear-gradient(0deg,#00000000 0 2px,#00120b55 2px 4px);mix-blend-mode:overlay}
-  .startlay{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;
-    background:#02100bdd;cursor:pointer;text-align:center;z-index:5}
-  .startlay .b{border:2px solid var(--acc);color:var(--acc);padding:14px 22px;border-radius:999px;
-    font-weight:800;font-size:16px;box-shadow:0 0 30px #22ff9b44;animation:pulse 2s infinite}
+  #radar{width:100%;height:100%;display:block;border-radius:50%;box-shadow:0 0 60px #0bff9a22,inset 0 0 80px #001f14}
+  .scan{position:absolute;inset:0;border-radius:50%;pointer-events:none;background:repeating-linear-gradient(0deg,#00000000 0 2px,#00120b55 2px 4px);mix-blend-mode:overlay}
+  .startlay{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;background:#02100bdd;cursor:pointer;text-align:center;z-index:5}
+  .startlay .b{border:2px solid var(--acc);color:var(--acc);padding:14px 22px;border-radius:999px;font-weight:800;font-size:16px;box-shadow:0 0 30px #22ff9b44;animation:pulse 2s infinite}
   .startlay small{display:block;margin-top:10px;color:var(--muted);font-size:12px}
   .startlay.hide{display:none}
-
   .hud{display:flex;justify-content:center;gap:8px;margin:12px 0 2px;flex-wrap:wrap}
-  .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;
-    padding:7px 14px;font-size:13px}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px}
   .chip b{color:var(--acc)}
   #trk.live{border-color:var(--acc);color:var(--acc);box-shadow:0 0 14px #22ff9b33}
-  .mutebtn{background:var(--panel);border:1px solid var(--line);color:var(--text);
-    border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer}
-
-  .log{max-width:560px;margin:14px auto 0;background:var(--panel);border:1px solid var(--line);
-    border-radius:14px;padding:12px 14px;font-family:"Consolas",monospace;font-size:12.5px;
-    height:150px;overflow:hidden}
+  .mutebtn{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer}
+  .log{max-width:560px;margin:14px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-family:"Consolas",monospace;font-size:12.5px;height:150px;overflow:hidden}
   .log .ln{color:var(--muted);opacity:.9;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .log .ln b{color:var(--acc)}
-
   section h2{font-size:20px;margin:26px 0 10px;text-shadow:0 0 10px #22ff9b33}
   .lore{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 18px 6px}
   .lore p{color:#bfe9d4;line-height:1.6;font-size:14px}
@@ -73,12 +52,8 @@
   .tile{background:#06291b;border:1px solid var(--line);border-radius:12px;padding:12px}
   .tile b{display:block;margin-bottom:4px;color:var(--text)}
   .tile span{color:var(--muted);font-size:13px}
-
-  .ad{margin:20px auto;max-width:728px;min-height:100px;background:#06291b;border:1px dashed var(--line);
-    border-radius:14px;display:grid;place-items:center;color:#3f7a5f;font-size:13px}
-
+  .ad{margin:20px auto;max-width:728px;min-height:100px;background:#06291b;border:1px dashed var(--line);border-radius:14px;display:grid;place-items:center;color:#3f7a5f;font-size:13px}
   footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 0 40px;color:var(--muted);font-size:12px}
-
   @media(max-width:620px){.grid2{grid-template-columns:1fr}.hero h1{font-size:20px}}
 </style>
 </head>
@@ -87,28 +62,23 @@
 <header>
   <div class="wrap bar">
     <div class="logo"><span class="dot"></span> JinnRadar · СОНАР</div>
-    <div class="counter">
-      <b id="globalCount">8 000 000 000</b>
-      <span>джиннов на Земле (по преданиям)</span>
-    </div>
+    <div class="counter"><b id="globalCount">8 000 000 000</b><span>джиннов на Земле · единый счётчик</span></div>
   </div>
 </header>
 
 <main class="wrap">
   <div class="hero">
     <h1>Сонар джиннов 📡🔮</h1>
-    <p>Ты — в центре. Луч сканирует пространство и ловит джиннов вокруг.
-       Идёшь — радар <b>следит за тобой по GPS</b>, и джинны смещаются, как на настоящем сонаре.</p>
+    <p>Мир джиннов <b>единый для всех</b>: кто рядом с тобой — видит тех же джиннов на тех же местах.
+       Ты в центре, едешь — радар следит по GPS, и мир проплывает мимо.</p>
   </div>
 
   <div class="radarbox">
     <canvas id="radar"></canvas>
     <div class="scan"></div>
     <div class="startlay" id="startlay">
-      <div>
-        <div class="b">📡 Запустить сонар</div>
-        <small>разреши геолокацию — радар будет следить за тобой</small>
-      </div>
+      <div><div class="b">📡 Запустить сонар</div>
+        <small>разреши геолокацию — радар будет следить за тобой</small></div>
     </div>
   </div>
 
@@ -156,240 +126,176 @@
   </div>
 </main>
 
-<footer>
-  <div class="wrap">© <span id="year"></span> JinnRadar</div>
-</footer>
+<footer><div class="wrap">© <span id="year"></span> JinnRadar</div></footer>
 
 <script>
-document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById('year').textContent=new Date().getFullYear();
 
-/* счётчик: с 8 млрд, медленно и только растёт (сохраняется) */
+/* ================= ЕДИНЫЙ СЧЁТЧИК (одинаков у всех, растёт от времени) =================
+   pop = 8 млрд + прирост от фиксированной даты. Зависит только от UTC-времени,
+   поэтому у любого пользователя на планете значение одинаковое и постепенно растёт. */
 (function(){const el=document.getElementById('globalCount');
-  let pop=parseInt(localStorage.getItem('jinnPop')||'8000000000',10);
-  if(!(pop>=8000000000)) pop=8000000000;
-  function tick(){pop+=1+Math.floor(Math.random()*3);el.textContent=pop.toLocaleString('ru-RU');
-    try{localStorage.setItem('jinnPop',pop)}catch(e){}}
-  tick();setInterval(tick,2500)})();
+  const EPOCH=Date.UTC(2024,0,1)/1000, BASE=8000000000, RATE=3; // +1 джинн каждые 3 сек
+  function pop(){return BASE+Math.max(0,Math.floor((Date.now()/1000-EPOCH)/RATE));}
+  function tick(){el.textContent=pop().toLocaleString('ru-RU');}
+  tick();setInterval(tick,1500);})();
 
 /* ---------- звук сонара ---------- */
-let actx=null, muted=false;
-function initAudio(){ if(actx) return; try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} }
-function ping(freq,dur,vol){
-  if(!actx||muted) return;
-  const t=actx.currentTime, o=actx.createOscillator(), g=actx.createGain();
-  o.type='sine'; o.frequency.setValueAtTime(freq,t);
-  o.frequency.exponentialRampToValueAtTime(Math.max(60,freq*0.55),t+dur);
-  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.015);
-  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-  o.connect(g).connect(actx.destination); o.start(t); o.stop(t+dur+0.02);
-}
-const sonarPing=()=>ping(660,1.1,0.22);
-const contactBlip=()=>ping(1350,0.10,0.06);
+let actx=null,muted=false;
+function initAudio(){if(actx)return;try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+function ping(freq,dur,vol){if(!actx||muted)return;const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+  o.type='sine';o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(Math.max(60,freq*0.55),t+dur);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+0.015);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(actx.destination);o.start(t);o.stop(t+dur+0.02);}
+const sonarPing=()=>ping(660,1.1,0.22), contactBlip=()=>ping(1350,0.10,0.06);
 
-/* ---------- джинны (реальные координаты) ---------- */
+/* ---------- детерминированный ГПСЧ ---------- */
+function hash2(x,y){let h=(Math.imul(x|0,374761393)+Math.imul(y|0,668265263))|0;
+  h=Math.imul(h^(h>>>13),1274126177);return (h^(h>>>16))>>>0;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+
 const TYPES=[
-  {nm:'Джинн',  emoji:'🧞', strong:false, w:50},
-  {nm:'Шайтан', emoji:'😈', strong:false, w:16},
-  {nm:'Гуль',   emoji:'👻', strong:false, w:14},
-  {nm:'Ифрит',  emoji:'🔥', strong:true,  w:12},
-  {nm:'Марид',  emoji:'🌀', strong:true,  w:8},
+  {nm:'Джинн', emoji:'🧞',strong:false,w:50},
+  {nm:'Шайтан',emoji:'😈',strong:false,w:16},
+  {nm:'Гуль',  emoji:'👻',strong:false,w:14},
+  {nm:'Ифрит', emoji:'🔥',strong:true, w:12},
+  {nm:'Марид', emoji:'🌀',strong:true, w:8},
 ];
+const TW=TYPES.reduce((s,t)=>s+t.w,0);
+function pickTypeR(rnd){let x=rnd()*TW;for(const t of TYPES){if((x-=t.w)<0)return t}return TYPES[0]}
 const NAMES=['Зубайр','Харис','Даджал','Самум','Азазиль','Хабиб','Малик','Джафар','Сакар','Рахим',
   'Васвас','Зафар','Хумам','Кабус','Насир','Джанан','Барзах','Тарик','Гассан','Заид','Фахир','Ханзала','Икрам','Сухайль'];
-function pickType(){let x=Math.random()*TYPES.reduce((s,t)=>s+t.w,0);for(const t of TYPES){if((x-=t.w)<0)return t}return TYPES[0]}
 
-const MAX_KM=3;           // внешнее кольцо = 3 км
-const N=90;
-
-/* пользователь (обновляется по GPS) */
-const user={lat:41.311,lng:69.279,haveFix:false,speed:0,lastT:0};
-
-/* гео-хелперы */
+/* ---------- гео ---------- */
+const MAX_KM=3, STEP=0.0025;   // клетка мира ~0.0025° (≈210–280 м)
 const toRad=d=>d*Math.PI/180, toDeg=r=>r*180/Math.PI;
-function haversineKm(la1,ln1,la2,ln2){
-  const R=6371,dLa=toRad(la2-la1),dLn=toRad(ln2-ln1);
-  const a=Math.sin(dLa/2)**2+Math.cos(toRad(la1))*Math.cos(toRad(la2))*Math.sin(dLn/2)**2;
-  return 2*R*Math.asin(Math.sqrt(a));
-}
-function bearingRad(la1,ln1,la2,ln2){ // 0=север, по часовой
-  const y=Math.sin(toRad(ln2-ln1))*Math.cos(toRad(la2));
-  const x=Math.cos(toRad(la1))*Math.sin(toRad(la2))-Math.sin(toRad(la1))*Math.cos(toRad(la2))*Math.cos(toRad(ln2-ln1));
-  return Math.atan2(y,x);
-}
-function destPoint(lat,lng,brgRad,distKm){ // точка на расстоянии/азимуте
-  const dLat=(distKm*Math.cos(brgRad))/111.32;
-  const dLng=(distKm*Math.sin(brgRad))/(111.32*Math.cos(toRad(lat)));
-  return {lat:lat+dLat,lng:lng+dLng};
-}
+function haversineKm(la1,ln1,la2,ln2){const R=6371,dLa=toRad(la2-la1),dLn=toRad(ln2-ln1);
+  const a=Math.sin(dLa/2)**2+Math.cos(toRad(la1))*Math.cos(toRad(la2))*Math.sin(dLn/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
+function bearingRad(la1,ln1,la2,ln2){const y=Math.sin(toRad(ln2-ln1))*Math.cos(toRad(la2));
+  const x=Math.cos(toRad(la1))*Math.sin(toRad(la2))-Math.sin(toRad(la1))*Math.cos(toRad(la2))*Math.cos(toRad(ln2-ln1));return Math.atan2(y,x);}
 
-const blips=[];
-function spawnBlip(baseLat,baseLng,edge){
-  const brg=Math.random()*2*Math.PI;
-  const dist=(edge? (0.7+Math.random()*0.3) : (0.1+Math.random()*0.88))*MAX_KM;
-  const pt=destPoint(baseLat,baseLng,brg,dist);
-  const vKmh=0.4+Math.random()*2.6;               // собственная скорость джинна
-  const vbrg=Math.random()*2*Math.PI;
-  return {
-    lat:pt.lat, lng:pt.lng,
-    vlat:(vKmh/3600)*Math.cos(vbrg)/111.32,        // град/сек
-    vlng:(vKmh/3600)*Math.sin(vbrg)/(111.32*Math.cos(toRad(pt.lat))),
-    t:pickType(), muslim:Math.random()<0.42,
-    name:NAMES[Math.floor(Math.random()*NAMES.length)],
-    lit:0, seen:false, sa:0, r:1
-  };
+const user={lat:41.311,lng:69.279,haveFix:false,speed:0};
+
+/* ---------- детерминированная генерация джиннов вокруг ----------
+   Джинны = функция от клетки карты (seed=hash(tx,ty)). У всех одинаково.
+   Их движение = функция от UTC-времени → синхронно у всех. */
+let jinns=[], genLat=null, genLng=null;
+function regen(){
+  const oldById={}; for(const j of jinns) oldById[j.id]=j;
+  const range=MAX_KM*1.3;
+  const rLat=range/111.32, rLng=range/(111.32*Math.cos(toRad(user.lat)));
+  const y0=Math.floor((user.lat-rLat)/STEP), y1=Math.ceil((user.lat+rLat)/STEP);
+  const x0=Math.floor((user.lng-rLng)/STEP), x1=Math.ceil((user.lng+rLng)/STEP);
+  const out=[];
+  for(let ty=y0;ty<=y1;ty++) for(let tx=x0;tx<=x1;tx++){
+    const rnd=mulberry32(hash2(tx,ty));
+    const p=rnd(); let n=0; if(p<0.14)n=1; else if(p<0.17)n=2;
+    for(let k=0;k<n;k++){
+      const baseLat=(ty+rnd())*STEP, baseLng=(tx+rnd())*STEP;
+      const t=pickTypeR(rnd);
+      const muslim=rnd()<0.42;
+      const name=NAMES[Math.floor(rnd()*NAMES.length)];
+      const phase=rnd()*6.283185;
+      const w=(0.03+rnd()*0.09)*(rnd()<0.5?1:-1);   // угловая скорость блуждания (рад/с)
+      const wr=0.02+rnd()*0.06;                     // радиус блуждания (км)
+      const id=tx+'_'+ty+'_'+k;
+      const j={id,baseLat,baseLng,phase,w,wr,t,muslim,name,lit:0,seen:false};
+      const o=oldById[id]; if(o){j.lit=o.lit;j.seen=o.seen;}
+      out.push(j);
+    }
+  }
+  jinns=out; genLat=user.lat; genLng=user.lng;
 }
-function seedBlips(lat,lng){ blips.length=0; for(let i=0;i<N;i++) blips.push(spawnBlip(lat,lng,false)); }
+function jinnPos(j,tSec){                            // текущая позиция (синхронно у всех)
+  const ph=j.phase+tSec*j.w;
+  const lat=j.baseLat+(j.wr*Math.cos(ph))/111.32;
+  const lng=j.baseLng+(j.wr*Math.sin(ph))/(111.32*Math.cos(toRad(j.baseLat)));
+  return {lat,lng};
+}
 
 /* ---------- canvas ---------- */
-const cv=document.getElementById('radar'), ctx=cv.getContext('2d');
+const cv=document.getElementById('radar'),ctx=cv.getContext('2d');
 let W=0,H=0,cx=0,cy=0,R=0,dpr=Math.min(window.devicePixelRatio||1,2);
-function resize(){const rect=cv.getBoundingClientRect();
-  W=Math.round(rect.width*dpr);H=Math.round(rect.height*dpr);
+function resize(){const r=cv.getBoundingClientRect();W=Math.round(r.width*dpr);H=Math.round(r.height*dpr);
   cv.width=W;cv.height=H;cx=W/2;cy=H/2;R=Math.min(W,H)/2-6*dpr;}
 window.addEventListener('resize',resize);
-
-let sweep=-Math.PI/2, prevSweep=sweep, running=false, last=0;
+let sweep=-Math.PI/2,prevSweep=sweep,running=false,last=0;
 const G='#22ff9b';
-
-function drawGrid(){
-  ctx.save();
-  const grd=ctx.createRadialGradient(cx,cy,R*0.05,cx,cy,R);
-  grd.addColorStop(0,'#0a3d29');grd.addColorStop(1,'#021b12');
-  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fill();
-  ctx.strokeStyle='rgba(34,255,155,0.28)';ctx.lineWidth=1*dpr;
-  for(let i=1;i<=4;i++){ctx.beginPath();ctx.arc(cx,cy,R*i/4,0,7);ctx.stroke();}
-  ctx.strokeStyle='rgba(34,255,155,0.16)';
-  for(let a=0;a<12;a++){const an=a*Math.PI/6;ctx.beginPath();ctx.moveTo(cx,cy);
-    ctx.lineTo(cx+Math.cos(an)*R,cy+Math.sin(an)*R);ctx.stroke();}
-  ctx.strokeStyle='rgba(34,255,155,0.5)';ctx.lineWidth=2*dpr;
-  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();
-  // метки км на кольцах
-  ctx.fillStyle='rgba(34,255,155,0.4)';ctx.font=`${9*dpr}px Consolas,monospace`;
-  ctx.textAlign='left';ctx.textBaseline='middle';
-  for(let i=1;i<=4;i++){ctx.fillText((MAX_KM*i/4).toFixed(2)+' км',cx+3*dpr,cy-R*i/4);}
-  // С/В/Ю/З
+function drawGrid(){ctx.save();const g=ctx.createRadialGradient(cx,cy,R*0.05,cx,cy,R);
+  g.addColorStop(0,'#0a3d29');g.addColorStop(1,'#021b12');ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fill();
+  ctx.strokeStyle='rgba(34,255,155,0.28)';ctx.lineWidth=1*dpr;for(let i=1;i<=4;i++){ctx.beginPath();ctx.arc(cx,cy,R*i/4,0,7);ctx.stroke();}
+  ctx.strokeStyle='rgba(34,255,155,0.16)';for(let a=0;a<12;a++){const an=a*Math.PI/6;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(an)*R,cy+Math.sin(an)*R);ctx.stroke();}
+  ctx.strokeStyle='rgba(34,255,155,0.5)';ctx.lineWidth=2*dpr;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();
+  ctx.fillStyle='rgba(34,255,155,0.4)';ctx.font=`${9*dpr}px Consolas,monospace`;ctx.textAlign='left';ctx.textBaseline='middle';
+  for(let i=1;i<=4;i++)ctx.fillText((MAX_KM*i/4).toFixed(2)+' км',cx+3*dpr,cy-R*i/4);
   ctx.fillStyle='rgba(34,255,155,0.6)';ctx.font=`${12*dpr}px Consolas,monospace`;ctx.textAlign='center';
-  ctx.fillText('С',cx,cy-R+11*dpr);ctx.fillText('Ю',cx,cy+R-11*dpr);
-  ctx.fillText('В',cx+R-11*dpr,cy);ctx.fillText('З',cx-R+11*dpr,cy);
-  ctx.restore();
-}
-function drawSweep(){
-  ctx.save();ctx.translate(cx,cy);
-  const steps=42,span=Math.PI*0.62;
-  for(let i=0;i<steps;i++){const a=sweep-(i/steps)*span,alpha=(1-i/steps)*0.22;
-    ctx.strokeStyle=`rgba(34,255,155,${alpha})`;ctx.lineWidth=2*dpr;
-    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*R,Math.sin(a)*R);ctx.stroke();}
-  ctx.strokeStyle=G;ctx.lineWidth=2.5*dpr;ctx.shadowColor=G;ctx.shadowBlur=14*dpr;
-  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(sweep)*R,Math.sin(sweep)*R);ctx.stroke();
-  ctx.restore();
-}
-function drawCenter(){
-  ctx.save();const pr=(Math.sin(Date.now()/380)*0.5+0.5);
-  ctx.fillStyle=G;ctx.shadowColor=G;ctx.shadowBlur=16*dpr;
-  ctx.beginPath();ctx.arc(cx,cy,4.5*dpr,0,7);ctx.fill();
-  ctx.strokeStyle=`rgba(34,255,155,${0.5-pr*0.4})`;ctx.lineWidth=2*dpr;ctx.shadowBlur=0;
-  ctx.beginPath();ctx.arc(cx,cy,(8+pr*10)*dpr,0,7);ctx.stroke();
-  ctx.fillStyle='rgba(34,255,155,0.85)';ctx.font=`${10*dpr}px Consolas,monospace`;
-  ctx.textAlign='center';ctx.fillText('ТЫ',cx,cy+18*dpr);
-  ctx.restore();
-}
+  ctx.fillText('С',cx,cy-R+11*dpr);ctx.fillText('Ю',cx,cy+R-11*dpr);ctx.fillText('В',cx+R-11*dpr,cy);ctx.fillText('З',cx-R+11*dpr,cy);ctx.restore();}
+function drawSweep(){ctx.save();ctx.translate(cx,cy);const steps=42,span=Math.PI*0.62;
+  for(let i=0;i<steps;i++){const a=sweep-(i/steps)*span,al=(1-i/steps)*0.22;ctx.strokeStyle=`rgba(34,255,155,${al})`;ctx.lineWidth=2*dpr;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*R,Math.sin(a)*R);ctx.stroke();}
+  ctx.strokeStyle=G;ctx.lineWidth=2.5*dpr;ctx.shadowColor=G;ctx.shadowBlur=14*dpr;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(sweep)*R,Math.sin(sweep)*R);ctx.stroke();ctx.restore();}
+function drawCenter(){ctx.save();const pr=(Math.sin(Date.now()/380)*0.5+0.5);ctx.fillStyle=G;ctx.shadowColor=G;ctx.shadowBlur=16*dpr;
+  ctx.beginPath();ctx.arc(cx,cy,4.5*dpr,0,7);ctx.fill();ctx.strokeStyle=`rgba(34,255,155,${0.5-pr*0.4})`;ctx.lineWidth=2*dpr;ctx.shadowBlur=0;
+  ctx.beginPath();ctx.arc(cx,cy,(8+pr*10)*dpr,0,7);ctx.stroke();ctx.fillStyle='rgba(34,255,155,0.85)';ctx.font=`${10*dpr}px Consolas,monospace`;ctx.textAlign='center';ctx.fillText('ТЫ',cx,cy+18*dpr);ctx.restore();}
 function angDiff(a,b){let d=(a-b)%(Math.PI*2);if(d<-Math.PI)d+=Math.PI*2;if(d>Math.PI)d-=Math.PI*2;return d}
 
-let logQ=[], lastLog=0;
-function pushLog(b,km){
-  const brg=Math.round((toDeg(bearingRad(user.lat,user.lng,b.lat,b.lng))+360)%360);
-  logQ.unshift(`<div class="ln">▸ КОНТАКТ: <b>${b.t.emoji} ${b.name}</b> · ${b.t.nm} · ${b.muslim?'муслим':'кафир'} · азимут ${brg}° · ${km.toFixed(2)} км</div>`);
-  if(logQ.length>7) logQ.pop();
-  document.getElementById('log').innerHTML=logQ.join('');
-}
+let logQ=[],lastLog=0;
+function pushLog(b,km,brgDeg){logQ.unshift(`<div class="ln">▸ КОНТАКТ: <b>${b.t.emoji} ${b.name}</b> · ${b.t.nm} · ${b.muslim?'муслим':'кафир'} · азимут ${brgDeg}° · ${km.toFixed(2)} км</div>`);
+  if(logQ.length>7)logQ.pop();document.getElementById('log').innerHTML=logQ.join('');}
 
 function drawBlips(){
-  let det=0;
-  for(const b of blips){
-    const km=haversineKm(user.lat,user.lng,b.lat,b.lng);
-    if(km>MAX_KM*1.25){ Object.assign(b,spawnBlip(user.lat,user.lng,true)); continue; }
-    const sa=bearingRad(user.lat,user.lng,b.lat,b.lng)-Math.PI/2;   // экранный угол
-    const r=Math.min(1,km/MAX_KM);
-    b.sa=sa; b.r=r;
+  const tSec=Date.now()/1000; let det=0,shown=0,strong=0;
+  for(const b of jinns){
+    const pos=jinnPos(b,tSec);
+    const km=haversineKm(user.lat,user.lng,pos.lat,pos.lng);
+    if(km>MAX_KM){ b.lit*=0.9; continue; }
+    shown++; if(b.t.strong) strong++;
+    const brg=bearingRad(user.lat,user.lng,pos.lat,pos.lng);
+    const sa=brg-Math.PI/2, r=Math.min(1,km/MAX_KM);
     const x=cx+Math.cos(sa)*r*R, y=cy+Math.sin(sa)*r*R;
-    const d1=angDiff(prevSweep,sa), d2=angDiff(sweep,sa);
-    if(d1<0 && d2>=0 && Math.abs(d2)<0.3){ b.lit=1; det++;
-      if(!b.seen||Math.random()<0.15){ pushLog(b,km); b.seen=true; } }
-    const a=Math.min(1,0.16+b.lit*0.9), rad=(b.t.strong?3.4:2.6)*dpr*(1+b.lit*0.7);
-    ctx.save();
-    ctx.fillStyle=`rgba(34,255,155,${a})`;ctx.shadowColor=G;ctx.shadowBlur=(4+b.lit*14)*dpr;
+    const d1=angDiff(prevSweep,sa),d2=angDiff(sweep,sa);
+    if(d1<0&&d2>=0&&Math.abs(d2)<0.3){b.lit=1;det++;
+      if(!b.seen||Math.random()<0.12){pushLog(b,km,Math.round((toDeg(brg)+360)%360));b.seen=true;}}
+    const a=Math.min(1,0.16+b.lit*0.9),rad=(b.t.strong?3.4:2.6)*dpr*(1+b.lit*0.7);
+    ctx.save();ctx.fillStyle=`rgba(34,255,155,${a})`;ctx.shadowColor=G;ctx.shadowBlur=(4+b.lit*14)*dpr;
     ctx.beginPath();ctx.arc(x,y,rad,0,7);ctx.fill();
-    if(b.lit>0.55){ ctx.globalAlpha=(b.lit-0.55)/0.45;ctx.shadowBlur=0;
-      ctx.font=`${13*dpr}px "Segoe UI Emoji",sans-serif`;ctx.textAlign='center';ctx.fillText(b.t.emoji,x,y-10*dpr);
+    if(b.lit>0.55){ctx.globalAlpha=(b.lit-0.55)/0.45;ctx.shadowBlur=0;ctx.font=`${13*dpr}px "Segoe UI Emoji",sans-serif`;ctx.textAlign='center';ctx.fillText(b.t.emoji,x,y-10*dpr);
       ctx.fillStyle='rgba(34,255,155,0.9)';ctx.font=`${9*dpr}px Consolas,monospace`;ctx.fillText(b.name,x,y+12*dpr);}
     ctx.restore();
   }
-  if(det>0 && Date.now()-lastLog>90){ contactBlip(); lastLog=Date.now(); }
-}
-
-function updateHUD(){
-  document.getElementById('nNear').textContent=blips.length;
-  document.getElementById('nStrong').textContent=blips.filter(b=>b.t.strong).length;
+  for(const b of jinns) b.lit*=0.955;
+  if(det>0&&Date.now()-lastLog>90){contactBlip();lastLog=Date.now();}
+  document.getElementById('nNear').textContent=shown;
+  document.getElementById('nStrong').textContent=strong;
   document.getElementById('spd').textContent=(user.speed||0).toFixed(1);
 }
 
-function frame(ts){
-  if(!running) return;
-  const dt=Math.min(50,ts-last)||16; last=ts;
-  prevSweep=sweep; sweep+=dt*0.00105;
-  const target=-Math.PI/2;
-  if(angDiff(prevSweep,target)<0 && angDiff(sweep,target)>=0) sonarPing();
-  if(sweep>Math.PI) sweep-=Math.PI*2;
-  // движение джиннов (собственное)
-  for(const b of blips){
-    b.lat+=b.vlat*dt/1000; b.lng+=b.vlng*dt/1000; b.lit*=0.955;
-    if(Math.random()<0.003){const vb=Math.random()*2*Math.PI,vk=0.4+Math.random()*2.6;
-      b.vlat=(vk/3600)*Math.cos(vb)/111.32; b.vlng=(vk/3600)*Math.sin(vb)/(111.32*Math.cos(toRad(b.lat)));}
-  }
-  ctx.clearRect(0,0,W,H);
-  drawGrid();drawSweep();drawBlips();drawCenter();
-  requestAnimationFrame(frame);
-}
+function frame(ts){if(!running)return;const dt=Math.min(50,ts-last)||16;last=ts;
+  prevSweep=sweep;sweep+=dt*0.00105;const target=-Math.PI/2;
+  if(angDiff(prevSweep,target)<0&&angDiff(sweep,target)>=0)sonarPing();
+  if(sweep>Math.PI)sweep-=Math.PI*2;
+  ctx.clearRect(0,0,W,H);drawGrid();drawSweep();drawBlips();drawCenter();requestAnimationFrame(frame);}
 
 /* ---------- GPS-слежение ---------- */
-let watchId=null, prevFix=null;
-function onFix(p){
-  const la=p.coords.latitude, ln=p.coords.longitude, tnow=p.timestamp||Date.now();
-  if(!user.haveFix){ user.haveFix=true; seedBlips(la,ln); }         // первый фикс — расставить джиннов
-  // скорость: из GPS, иначе по перемещению
-  let spd=(p.coords.speed!=null && !isNaN(p.coords.speed))? p.coords.speed*3.6 : null; // км/ч
-  if(spd==null && prevFix){ const dkm=haversineKm(prevFix.la,prevFix.ln,la,ln);
-    const dh=(tnow-prevFix.t)/3600000; if(dh>0) spd=dkm/dh; }
-  let s=Math.max(0, spd||0);
-  if(s>250) s=user.speed;                                  // игнор GPS-скачков
-  user.speed = user.speed? user.speed*0.6+s*0.4 : s;       // сглаживание
-  user.lat=la; user.lng=ln;                                          // ← двигаемся: контакты сместятся
-  prevFix={la,ln,t:tnow};
-  const trk=document.getElementById('trk');
-  trk.classList.add('live'); trk.textContent='🛰️ слежу за тобой';
-  updateHUD();
-}
-function onFixErr(){ const trk=document.getElementById('trk'); trk.textContent='🛰️ GPS недоступен'; }
-function startTracking(){
-  if(!navigator.geolocation){ onFixErr(); return; }
-  navigator.geolocation.getCurrentPosition(onFix,onFixErr,{enableHighAccuracy:true,timeout:8000});
-  watchId=navigator.geolocation.watchPosition(onFix,onFixErr,{enableHighAccuracy:true,maximumAge:1000,timeout:15000});
-}
+let prevFix=null;
+function onFix(p){const la=p.coords.latitude,ln=p.coords.longitude,tnow=p.timestamp||Date.now();
+  let spd=(p.coords.speed!=null&&!isNaN(p.coords.speed))?p.coords.speed*3.6:null;
+  if(spd==null&&prevFix){const dkm=haversineKm(prevFix.la,prevFix.ln,la,ln),dh=(tnow-prevFix.t)/3600000;if(dh>0)spd=dkm/dh;}
+  let s=Math.max(0,spd||0); if(s>250)s=user.speed; user.speed=user.speed?user.speed*0.6+s*0.4:s;
+  user.lat=la;user.lng=ln;user.haveFix=true;prevFix={la,ln,t:tnow};
+  if(genLat==null||haversineKm(genLat,genLng,la,ln)>0.12) regen();  // пересчёт мира при заметном сдвиге
+  const trk=document.getElementById('trk');trk.classList.add('live');trk.textContent='🛰️ слежу за тобой';}
+function onErr(){document.getElementById('trk').textContent='🛰️ GPS недоступен'; if(genLat==null) regen();}
+function startTracking(){if(!navigator.geolocation){onErr();return;}
+  navigator.geolocation.getCurrentPosition(onFix,onErr,{enableHighAccuracy:true,timeout:8000});
+  navigator.geolocation.watchPosition(onFix,onErr,{enableHighAccuracy:true,maximumAge:1000,timeout:15000});}
 
-/* ---------- запуск ---------- */
-function startRadar(){ resize(); if(!user.haveFix) seedBlips(user.lat,user.lng);
-  running=true; last=performance.now(); requestAnimationFrame(frame); updateHUD(); }
-document.getElementById('startlay').addEventListener('click',function(){
-  this.classList.add('hide');
-  initAudio(); if(actx&&actx.state==='suspended')actx.resume();
-  startTracking(); startRadar();
-});
-document.getElementById('mute').addEventListener('click',function(){
-  muted=!muted; this.textContent=muted?'🔇 Звук выкл':'🔊 Звук вкл';
-});
+function startRadar(){resize();if(genLat==null)regen();running=true;last=performance.now();requestAnimationFrame(frame);}
+document.getElementById('startlay').addEventListener('click',function(){this.classList.add('hide');
+  initAudio();if(actx&&actx.state==='suspended')actx.resume();startTracking();startRadar();});
+document.getElementById('mute').addEventListener('click',function(){muted=!muted;this.textContent=muted?'🔇 Звук выкл':'🔊 Звук вкл';});
 
-/* статичный кадр до старта */
-resize(); ctx.clearRect(0,0,W,H); drawGrid(); drawCenter();
+resize();ctx.clearRect(0,0,W,H);drawGrid();drawCenter();
 </script>
 </body>
 </html>
