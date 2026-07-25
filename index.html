@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>JinnRadar — радар джиннов рядом с тобой 🔮</title>
+<meta name="description" content="Живой радар джиннов: посмотри на карте, сколько джиннов рядом с тобой прямо сейчас. Развлекательный проект по мотивам исламских преданий." />
+<meta property="og:title" content="JinnRadar — радар джиннов" />
+<meta property="og:description" content="Сколько джиннов рядом с тобой прямо сейчас? Проверь на карте." />
+<meta property="og:type" content="website" />
+
+<!-- Google AdSense: замените ca-pub-XXXXXXXXXXXXXXXX на ваш ID издателя -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root{
+    --bg:#070b16; --panel:#0e1526cc; --panel2:#111b30; --line:#22304d;
+    --text:#e7edf7; --muted:#93a2bf; --acc:#25e0a3; --acc2:#7b5cff; --fire:#ff6a3d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  a{color:var(--acc)}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+  header{position:sticky;top:0;z-index:1000;background:linear-gradient(180deg,#070b16 60%,#070b16cc);
+    border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+  .bar{display:flex;align-items:center;gap:12px;height:60px}
+  .logo{font-weight:800;font-size:20px;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+  .logo .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);
+    box-shadow:0 0 12px var(--acc);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .counter{margin-left:auto;text-align:right;line-height:1.1}
+  .counter b{font-variant-numeric:tabular-nums;font-size:15px;color:var(--acc)}
+  .counter span{display:block;font-size:11px;color:var(--muted)}
+
+  .hero{padding:26px 0 8px}
+  .hero h1{margin:0 0 6px;font-size:26px}
+  .hero p{margin:0;color:var(--muted);font-size:14px;max-width:640px}
+
+  .scanbtn{display:inline-flex;align-items:center;gap:10px;margin:16px 0 8px;
+    background:linear-gradient(135deg,var(--acc),#12b98a);color:#04120c;border:0;
+    padding:14px 22px;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;
+    box-shadow:0 8px 30px #25e0a355}
+  .scanbtn:active{transform:translateY(1px)}
+  .scanbtn.loading{opacity:.7;pointer-events:none}
+
+  .mapwrap{position:relative;margin:10px 0 0;border:1px solid var(--line);
+    border-radius:18px;overflow:hidden;height:60vh;min-height:380px}
+  #map{width:100%;height:100%;background:#0a1020}
+  .leaflet-container{background:#0a1020}
+  /* радар-развёртка поверх карты */
+  .sweep{position:absolute;inset:0;pointer-events:none;display:none;z-index:500}
+  .sweep.on{display:block}
+  .ring{position:absolute;left:50%;top:50%;border:2px solid var(--acc);border-radius:50%;
+    transform:translate(-50%,-50%);opacity:0;animation:ring 2.4s ease-out infinite}
+  @keyframes ring{0%{width:0;height:0;opacity:.7}100%{width:120vmax;height:120vmax;opacity:0}}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .stat .n{font-size:24px;font-weight:800}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+
+  .list{display:grid;gap:10px;margin:6px 0 20px}
+  .card{display:flex;align-items:center;gap:12px;background:var(--panel);
+    border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .ava{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex:0 0 auto}
+  .card .nm{font-weight:700}
+  .card .meta{font-size:12px;color:var(--muted)}
+  .badge{margin-left:auto;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .b-muslim{background:#12331f;color:#4fe08a}
+  .b-kafir{background:#3a1620;color:#ff7a90}
+  .dist{font-size:12px;color:var(--acc);font-weight:700;margin-left:8px;white-space:nowrap}
+
+  section h2{font-size:20px;margin:26px 0 10px}
+  .lore{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 18px 6px}
+  .lore p{color:#cdd8ee;line-height:1.6;font-size:14px}
+  .lore .q{border-left:3px solid var(--acc2);padding-left:12px;color:#b9c6e6;font-style:italic}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+  .tile{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .tile b{display:block;margin-bottom:4px}
+  .tile span{color:var(--muted);font-size:13px}
+
+  .ad{margin:20px 0;min-height:100px;background:var(--panel2);border:1px dashed var(--line);
+    border-radius:14px;display:grid;place-items:center;color:#4c5c7d;font-size:13px}
+
+  footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 0 40px;color:var(--muted);font-size:12px}
+  .disc{background:#141b2e;border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 0 12px;color:#aebbd6}
+
+  @media(max-width:620px){
+    .stats{grid-template-columns:1fr 1fr}
+    .grid2{grid-template-columns:1fr}
+    .hero h1{font-size:22px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <div class="logo"><span class="dot"></span> JinnRadar</div>
+    <div class="counter">
+      <b id="globalCount">8 000 000 000</b>
+      <span>джиннов на Земле (по преданиям)</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Сколько джиннов рядом с тобой прямо сейчас? 🔮</h1>
+    <p>JinnRadar показывает на карте невидимый мир джиннов вокруг твоей локации.
+       Нажми «Сканировать» — и посмотри, кто рядом. Проект развлекательный, по мотивам исламских преданий.</p>
+    <button id="scan" class="scanbtn">📡 Сканировать рядом со мной</button>
+  </div>
+
+  <div class="mapwrap">
+    <div id="map"></div>
+    <div class="sweep" id="sweep">
+      <div class="ring"></div>
+      <div class="ring" style="animation-delay:.8s"></div>
+      <div class="ring" style="animation-delay:1.6s"></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="nNear">—</div><div class="l">джиннов в радиусе 3 км</div></div>
+    <div class="stat"><div class="n" id="nMuslim">—</div><div class="l">верующих (мусульман)</div></div>
+    <div class="stat"><div class="n" id="nStrong">—</div><div class="l">сильных (ифриты/мариды)</div></div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="ad">
+    <!-- AdSense блок 1 -->
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+      data-ad-slot="0000000000" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <span>реклама</span>
+  </div>
+
+  <section>
+    <h2>Как джинны живут по Исламу</h2>
+    <div class="lore">
+      <p>Джинны (араб. <b>جِنّ</b> — «сокрытые») — разумные создания, сотворённые Аллахом.
+         В Коране сказано, что человек создан из глины, а джинн — из <b>бездымного огня</b>:</p>
+      <p class="q">«И сотворил джиннов из чистого пламени огня» (Коран, сура «Ар-Рахман», 55:15).</p>
+      <p>Джиннам, как и людям, дана <b>свобода выбора</b>. Среди них есть верующие (мусульмане)
+         и неверующие; они будут отвечать за свои дела в Судный день. Пророк Мухаммад ﷺ был
+         послан и к людям, и к джиннам — этому посвящена отдельная сура «Аль-Джинн» (72-я).</p>
+      <div class="grid2">
+        <div class="tile"><b>Где живут</b><span>Часто в безлюдных местах: пустынях, развалинах, заброшенных домах. Живут своим, параллельным нам, обществом.</span></div>
+        <div class="tile"><b>Как живут</b><span>Едят, пьют, вступают в брак, рождают детей и умирают — но живут дольше людей.</span></div>
+        <div class="tile"><b>Видимость</b><span>Обычно они видят нас, а мы их — нет. Могут принимать разные облики.</span></div>
+        <div class="tile"><b>Иблис</b><span>Шайтан (Иблис) — из джиннов, ослушавшийся приказа Аллаха. Не все джинны злые.</span></div>
+      </div>
+      <p><b>Виды джиннов в преданиях:</b> <b>Марид</b> — самые могущественные; <b>Ифрит</b> — сильные,
+         связанные с огнём; <b>Шайтан</b> — сбивающие с пути; <b>Гуль</b> — обитатели пустынь и кладбищ;
+         обычные джинны — живущие рядом с людьми.</p>
+    </div>
+  </section>
+
+  <div class="ad">
+    <!-- AdSense блок 2 -->
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+      data-ad-slot="1111111111" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <span>реклама</span>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="disc">⚠️ <b>Важно:</b> JinnRadar — это развлекательный проект. Он не «обнаруживает» реальных
+      джиннов — метки на карте генерируются программно для игры и интереса. Информация о джиннах приведена
+      с уважением, по мотивам исламских источников (Коран, хадисы) и народных преданий.</div>
+    © <span id="year"></span> JinnRadar · сделано для развлечения
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---- глобальный счётчик ~8 млрд, слегка «дышит» ---- */
+(function(){
+  const el = document.getElementById('globalCount');
+  let base = 8_000_000_000;
+  function tick(){
+    const n = base + Math.floor((Math.sin(Date.now()/900)*0.5+0.5)*734219);
+    el.textContent = n.toLocaleString('ru-RU');
+  }
+  tick(); setInterval(tick, 1200);
+})();
+
+/* ---- детерминированный ГПСЧ, чтобы у одной точки был стабильный «набор» джиннов ---- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function seedFrom(lat,lng){return Math.floor((lat*1e4))*73856093 ^ Math.floor((lng*1e4))*19349663}
+
+const TYPES=[
+  {key:'jinn',   nm:'Джинн',   emoji:'🧞', color:'#25e0a3', bg:'#0f2a20', strong:false, w:52},
+  {key:'shaytan',nm:'Шайтан',  emoji:'😈', color:'#ff7a90', bg:'#2a1420', strong:false, w:16},
+  {key:'ghul',   nm:'Гуль',    emoji:'👻', color:'#9aa7c7', bg:'#161d2e', strong:false, w:14},
+  {key:'ifrit',  nm:'Ифрит',   emoji:'🔥', color:'#ff6a3d', bg:'#2a170f', strong:true,  w:12},
+  {key:'marid',  nm:'Марид',   emoji:'🌀', color:'#7b5cff', bg:'#1a1533', strong:true,  w:6},
+];
+const NAMES=['Зубайр','Харис','Даджал','Самум','Азазиль','Хабиб','Малик','Джафар','Сакар','Рахим',
+  'Ваcвас','Зафар','Хумам','Кабус','Насир','Джанан','Барзах','Тарик','Гассан','Заид','Фахир','Ханзала'];
+
+function pickType(r){let x=r()* TYPES.reduce((s,t)=>s+t.w,0);for(const t of TYPES){if((x-=t.w)<0)return t}return TYPES[0]}
+
+/* ---- карта ---- */
+const map=L.map('map',{zoomControl:true,attributionControl:true}).setView([41.311,69.279],13); // Ташкент по умолчанию
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  maxZoom:19, subdomains:'abcd',
+  attribution:'&copy; OpenStreetMap &copy; CARTO'
+}).addTo(map);
+
+let jinnLayer=L.layerGroup().addTo(map);
+let meMarker=null;
+
+function jinnIcon(t){
+  return L.divIcon({className:'',iconSize:[34,34],iconAnchor:[17,17],
+    html:`<div style="width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+      font-size:18px;background:${t.bg};border:2px solid ${t.color};
+      box-shadow:0 0 12px ${t.color}66">${t.emoji}</div>`});
+}
+function meIcon(){
+  return L.divIcon({className:'',iconSize:[22,22],iconAnchor:[11,11],
+    html:`<div style="width:16px;height:16px;border-radius:50%;background:#4c86ff;
+      border:3px solid #fff;box-shadow:0 0 0 6px #4c86ff44"></div>`});
+}
+function haversine(a,b,c,d){const R=6371,dl=(c-a)*Math.PI/180,dn=(d-b)*Math.PI/180;
+  const x=Math.sin(dl/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dn/2)**2;
+  return 2*R*Math.asin(Math.sqrt(x))}
+
+function generate(lat,lng){
+  jinnLayer.clearLayers();
+  const rnd=mulberry32(seedFrom(lat,lng)>>>0);
+  const count=14+Math.floor(rnd()*20);           // 14..33 рядом
+  const arr=[];
+  for(let i=0;i<count;i++){
+    const ang=rnd()*Math.PI*2;
+    const dist=0.2+rnd()*2.8;                     // км, до ~3 км
+    const dLat=(dist/111)*Math.cos(ang);
+    const dLng=(dist/(111*Math.cos(lat*Math.PI/180)))*Math.sin(ang);
+    const t=pickType(rnd);
+    const muslim=rnd()<0.42;
+    const name=NAMES[Math.floor(rnd()*NAMES.length)];
+    const age=120+Math.floor(rnd()*1400);
+    const la=lat+dLat, ln=lng+dLng;
+    const km=haversine(lat,lng,la,ln);
+    L.marker([la,ln],{icon:jinnIcon(t)})
+      .bindPopup(`<b>${t.emoji} ${name}</b><br>${t.nm} · ${muslim?'мусульманин':'неверующий'}<br>Возраст: ${age} лет<br>${km.toFixed(2)} км от тебя`)
+      .addTo(jinnLayer);
+    arr.push({t,name,muslim,age,km});
+  }
+  arr.sort((a,b)=>a.km-b.km);
+  render(arr);
+}
+
+function render(arr){
+  document.getElementById('nNear').textContent=arr.length;
+  document.getElementById('nMuslim').textContent=arr.filter(a=>a.muslim).length;
+  document.getElementById('nStrong').textContent=arr.filter(a=>a.t.strong).length;
+  const list=document.getElementById('list');
+  list.innerHTML='';
+  arr.slice(0,12).forEach(a=>{
+    const el=document.createElement('div');el.className='card';
+    el.innerHTML=`<div class="ava" style="background:${a.t.bg};border:2px solid ${a.t.color}">${a.t.emoji}</div>
+      <div><div class="nm">${a.name}</div><div class="meta">${a.t.nm} · ${a.age} лет</div></div>
+      <span class="dist">${a.km.toFixed(2)} км</span>
+      <span class="badge ${a.muslim?'b-muslim':'b-kafir'}">${a.muslim?'мусульманин':'неверующий'}</span>`;
+    list.appendChild(el);
+  });
+}
+
+function sweep(on){document.getElementById('sweep').classList.toggle('on',on)}
+
+function scanAt(lat,lng){
+  sweep(true);
+  if(meMarker)map.removeLayer(meMarker);
+  meMarker=L.marker([lat,lng],{icon:meIcon()}).addTo(map).bindPopup('Ты здесь');
+  map.setView([lat,lng],14,{animate:true});
+  setTimeout(()=>{generate(lat,lng);sweep(false);
+    document.getElementById('scan').classList.remove('loading');
+    document.getElementById('scan').textContent='📡 Сканировать снова';},2200);
+}
+
+document.getElementById('scan').addEventListener('click',()=>{
+  const b=document.getElementById('scan');b.classList.add('loading');b.textContent='Сканирую…';
+  if(!navigator.geolocation){scanAt(41.311,69.279);return}
+  navigator.geolocation.getCurrentPosition(
+    p=>scanAt(p.coords.latitude,p.coords.longitude),
+    ()=>scanAt(41.311,69.279),      // отказ/ошибка — Ташкент
+    {enableHighAccuracy:true,timeout:8000}
+  );
+});
+
+/* показать демо сразу при загрузке (Ташкент), чтобы карта не была пустой */
+generate(41.311,69.279);
+</script>
+</body>
+</html>
