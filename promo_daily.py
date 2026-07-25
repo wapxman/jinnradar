@@ -41,9 +41,13 @@ SB_ANON = ("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
            "X4UnLTta5Pm70sOwZkwJgvA8EkQtJPDmsn-2dMlkqjA")
 PAGES = [
     SITE,
+    SITE + "g/",
     SITE + "g/dzhinny-v-islame.html",
     SITE + "g/vidy-dzhinnov.html",
     SITE + "g/kak-uznat-dzhinna.html",
+    SITE + "g/dzhinn-v-dome-priznaki.html",
+    SITE + "g/kak-zashchititsya-ot-dzhinnov.html",
+    SITE + "g/jinlar-haqida.html",
 ]
 CTX = ssl.create_default_context(); CTX.check_hostname=False; CTX.verify_mode=ssl.CERT_NONE
 

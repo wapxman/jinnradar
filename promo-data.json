@@ -1,6 +1,6 @@
 {
  "started": "2026-07-26",
- "runs": 2,
+ "runs": 3,
  "history": [
   {
    "date": "2026-07-26",
@@ -16,6 +16,15 @@
    "today": 0,
    "avg7": 2,
    "total": 2,
+   "site": 200,
+   "indexnow": "ok",
+   "reached": false
+  },
+  {
+   "date": "2026-07-26",
+   "today": 0,
+   "avg7": 3,
+   "total": 3,
    "site": 200,
    "indexnow": "ok",
    "reached": false
