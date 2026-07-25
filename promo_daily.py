@@ -134,10 +134,11 @@ def check_site():
     except Exception: return 0
 
 def check_counter():
+    # ТОЛЬКО чтение — не вызываем jr_hit(), иначе накрутили бы KPI сами на себя.
     try:
-        code,_ = http(SB_URL+"/rest/v1/rpc/jr_hit", data=b"{}",
-            headers={"apikey":SB_ANON,"Authorization":"Bearer "+SB_ANON,"Content-Type":"application/json"})
-        return code in (200,204)
+        code,_ = http(SB_URL+"/rest/v1/jr_hits?select=day&limit=1",
+            headers={"apikey":SB_ANON,"Authorization":"Bearer "+SB_ANON})
+        return code == 200
     except Exception: return False
 
 def day_index():
