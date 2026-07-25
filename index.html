@@ -158,20 +158,20 @@
 
 <footer>
   <div class="wrap">
-    <div class="disc">⚠️ <b>Важно:</b> JinnRadar — развлекательный проект. Он не «обнаруживает» реальных
-      джиннов — контакты на сонаре генерируются программно для игры и интереса. Информация о джиннах
-      приведена с уважением, по мотивам исламских источников (Коран, хадисы) и народных преданий.</div>
-    © <span id="year"></span> JinnRadar · сделано для развлечения
+    © <span id="year"></span> JinnRadar
   </div>
 </footer>
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
-/* глобальный счётчик ~8 млрд */
-(function(){const el=document.getElementById('globalCount');const base=8000000000;
-  function tick(){const n=base+Math.floor((Math.sin(Date.now()/900)*0.5+0.5)*734219);
-    el.textContent=n.toLocaleString('ru-RU')}tick();setInterval(tick,1200)})();
+/* глобальный счётчик: стартует с 8 млрд, медленно и ТОЛЬКО растёт (сохраняется между заходами) */
+(function(){const el=document.getElementById('globalCount');
+  let pop=parseInt(localStorage.getItem('jinnPop')||'8000000000',10);
+  if(!(pop>=8000000000)) pop=8000000000;
+  function tick(){pop+=1+Math.floor(Math.random()*3);el.textContent=pop.toLocaleString('ru-RU');
+    try{localStorage.setItem('jinnPop',pop)}catch(e){}}
+  tick();setInterval(tick,2500)})();
 
 /* ---------- аудио сонара (Web Audio) ---------- */
 let actx=null, muted=false;
@@ -208,8 +208,8 @@ function makeBlip(){
   return {
     ang:Math.random()*Math.PI*2,          // азимут (радианы)
     r:0.06+Math.random()*0.92,            // радиус 0..1
-    va:(Math.random()-0.5)*0.010,         // угловая скорость (движение)
-    vr:(Math.random()-0.5)*0.0016,        // радиальная скорость
+    va:(Math.random()-0.5)*0.0052,        // угловая скорость (движение) — медленнее
+    vr:(Math.random()-0.5)*0.0008,        // радиальная скорость — медленнее
     t:pickType(),
     muslim:Math.random()<0.42,
     name:NAMES[Math.floor(Math.random()*NAMES.length)],
@@ -336,7 +336,7 @@ function frame(ts){
   if(!running) return;
   const dt=Math.min(50,ts-last)||16; last=ts;
   prevSweep=sweep;
-  sweep+=dt*0.0016;                      // скорость вращения луча
+  sweep+=dt*0.00105;                     // скорость вращения луча — медленнее
   // пинг за оборот (когда луч пересекает верх, азимут -90°)
   const target=-Math.PI/2;
   if(angDiff(prevSweep,target)<0 && angDiff(sweep,target)>=0) sonarPing();
@@ -348,7 +348,7 @@ function frame(ts){
     b.r+=b.vr*dt/16;
     if(b.r<0.05){b.r=0.05;b.vr=Math.abs(b.vr)}
     if(b.r>0.98){b.r=0.98;b.vr=-Math.abs(b.vr)}
-    if(Math.random()<0.004){b.va+=(Math.random()-0.5)*0.004}
+    if(Math.random()<0.004){b.va+=(Math.random()-0.5)*0.002}
     b.lit*=0.955;                         // затухание подсветки
   }
 
