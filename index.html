@@ -3,103 +3,91 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>JinnRadar — радар джиннов рядом с тобой 🔮</title>
-<meta name="description" content="Живой радар джиннов: посмотри на карте, сколько джиннов рядом с тобой прямо сейчас. Развлекательный проект по мотивам исламских преданий." />
-<meta property="og:title" content="JinnRadar — радар джиннов" />
-<meta property="og:description" content="Сколько джиннов рядом с тобой прямо сейчас? Проверь на карте." />
+<title>JinnRadar — сонар джиннов 🔮📡</title>
+<meta name="description" content="Сонар джиннов как на подводной лодке: ты в центре, луч сканирует пространство и находит джиннов вокруг. Развлекательный проект по мотивам исламских преданий." />
+<meta property="og:title" content="JinnRadar — сонар джиннов" />
+<meta property="og:description" content="Включи сонар и посмотри, сколько джиннов движется вокруг тебя прямо сейчас." />
 <meta property="og:type" content="website" />
 
 <!-- Google AdSense: замените ca-pub-XXXXXXXXXXXXXXXX на ваш ID издателя -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root{
-    --bg:#070b16; --panel:#0e1526cc; --panel2:#111b30; --line:#22304d;
-    --text:#e7edf7; --muted:#93a2bf; --acc:#25e0a3; --acc2:#7b5cff; --fire:#ff6a3d;
+    --bg:#02100b; --panel:#07231699; --line:#0f4d34; --text:#c8ffe6;
+    --muted:#5fae86; --acc:#22ff9b; --dim:#0b3d29;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+    font-family:"Segoe UI",-apple-system,Roboto,sans-serif}
   a{color:var(--acc)}
-  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 16px}
 
-  header{position:sticky;top:0;z-index:1000;background:linear-gradient(180deg,#070b16 60%,#070b16cc);
-    border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
-  .bar{display:flex;align-items:center;gap:12px;height:60px}
-  .logo{font-weight:800;font-size:20px;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
-  .logo .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);
+  header{position:sticky;top:0;z-index:1000;background:linear-gradient(180deg,#02100b 65%,#02100bcc);
+    border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;gap:12px;height:58px}
+  .logo{font-weight:800;font-size:19px;letter-spacing:.5px;display:flex;align-items:center;gap:8px;
+    text-shadow:0 0 10px #22ff9b66}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);
     box-shadow:0 0 12px var(--acc);animation:pulse 1.6s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
   .counter{margin-left:auto;text-align:right;line-height:1.1}
-  .counter b{font-variant-numeric:tabular-nums;font-size:15px;color:var(--acc)}
-  .counter span{display:block;font-size:11px;color:var(--muted)}
+  .counter b{font-variant-numeric:tabular-nums;font-size:14px;color:var(--acc);text-shadow:0 0 8px #22ff9b55}
+  .counter span{display:block;font-size:10px;color:var(--muted)}
 
-  .hero{padding:26px 0 8px}
-  .hero h1{margin:0 0 6px;font-size:26px}
-  .hero p{margin:0;color:var(--muted);font-size:14px;max-width:640px}
+  .hero{padding:22px 0 6px;text-align:center}
+  .hero h1{margin:0 0 6px;font-size:24px;text-shadow:0 0 14px #22ff9b44}
+  .hero p{margin:0 auto;color:var(--muted);font-size:13px;max-width:520px}
 
-  .scanbtn{display:inline-flex;align-items:center;gap:10px;margin:16px 0 8px;
-    background:linear-gradient(135deg,var(--acc),#12b98a);color:#04120c;border:0;
-    padding:14px 22px;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;
-    box-shadow:0 8px 30px #25e0a355}
-  .scanbtn:active{transform:translateY(1px)}
-  .scanbtn.loading{opacity:.7;pointer-events:none}
+  .radarbox{position:relative;margin:16px auto 0;width:min(92vw,560px);aspect-ratio:1/1}
+  #radar{width:100%;height:100%;display:block;border-radius:50%;
+    box-shadow:0 0 60px #0bff9a22, inset 0 0 80px #001f14}
+  /* CRT-сканлайны поверх */
+  .scan{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+    background:repeating-linear-gradient(0deg,#00000000 0 2px,#00120b55 2px 4px);mix-blend-mode:overlay}
+  .startlay{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;
+    background:#02100bdd;cursor:pointer;text-align:center;z-index:5}
+  .startlay .b{border:2px solid var(--acc);color:var(--acc);padding:14px 22px;border-radius:999px;
+    font-weight:800;font-size:16px;box-shadow:0 0 30px #22ff9b44;animation:pulse 2s infinite}
+  .startlay small{display:block;margin-top:10px;color:var(--muted);font-size:12px}
+  .startlay.hide{display:none}
 
-  .mapwrap{position:relative;margin:10px 0 0;border:1px solid var(--line);
-    border-radius:18px;overflow:hidden;height:60vh;min-height:380px}
-  #map{width:100%;height:100%;background:#0a1020}
-  .leaflet-container{background:#0a1020}
-  /* радар-развёртка поверх карты */
-  .sweep{position:absolute;inset:0;pointer-events:none;display:none;z-index:500}
-  .sweep.on{display:block}
-  .ring{position:absolute;left:50%;top:50%;border:2px solid var(--acc);border-radius:50%;
-    transform:translate(-50%,-50%);opacity:0;animation:ring 2.4s ease-out infinite}
-  @keyframes ring{0%{width:0;height:0;opacity:.7}100%{width:120vmax;height:120vmax;opacity:0}}
+  .hud{display:flex;justify-content:center;gap:8px;margin:12px 0 2px;flex-wrap:wrap}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:7px 14px;font-size:13px}
+  .chip b{color:var(--acc)}
+  .mutebtn{background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer}
 
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
-  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
-  .stat .n{font-size:24px;font-weight:800}
-  .stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .log{max-width:560px;margin:14px auto 0;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:12px 14px;font-family:"Consolas",monospace;font-size:12.5px;
+    height:150px;overflow:hidden}
+  .log .ln{color:var(--muted);opacity:.9;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .log .ln b{color:var(--acc)}
 
-  .list{display:grid;gap:10px;margin:6px 0 20px}
-  .card{display:flex;align-items:center;gap:12px;background:var(--panel);
-    border:1px solid var(--line);border-radius:14px;padding:12px 14px}
-  .ava{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex:0 0 auto}
-  .card .nm{font-weight:700}
-  .card .meta{font-size:12px;color:var(--muted)}
-  .badge{margin-left:auto;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
-  .b-muslim{background:#12331f;color:#4fe08a}
-  .b-kafir{background:#3a1620;color:#ff7a90}
-  .dist{font-size:12px;color:var(--acc);font-weight:700;margin-left:8px;white-space:nowrap}
-
-  section h2{font-size:20px;margin:26px 0 10px}
-  .lore{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 18px 6px}
-  .lore p{color:#cdd8ee;line-height:1.6;font-size:14px}
-  .lore .q{border-left:3px solid var(--acc2);padding-left:12px;color:#b9c6e6;font-style:italic}
+  section h2{font-size:20px;margin:26px 0 10px;text-shadow:0 0 10px #22ff9b33}
+  .lore{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 18px 6px}
+  .lore p{color:#bfe9d4;line-height:1.6;font-size:14px}
+  .lore .q{border-left:3px solid var(--acc);padding-left:12px;color:#a9dcc5;font-style:italic}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
-  .tile{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
-  .tile b{display:block;margin-bottom:4px}
+  .tile{background:#06291b;border:1px solid var(--line);border-radius:12px;padding:12px}
+  .tile b{display:block;margin-bottom:4px;color:var(--text)}
   .tile span{color:var(--muted);font-size:13px}
 
-  .ad{margin:20px 0;min-height:100px;background:var(--panel2);border:1px dashed var(--line);
-    border-radius:14px;display:grid;place-items:center;color:#4c5c7d;font-size:13px}
+  .ad{margin:20px auto;max-width:728px;min-height:100px;background:#06291b;border:1px dashed var(--line);
+    border-radius:14px;display:grid;place-items:center;color:#3f7a5f;font-size:13px}
 
   footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 0 40px;color:var(--muted);font-size:12px}
-  .disc{background:#141b2e;border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 0 12px;color:#aebbd6}
+  .disc{background:#06291b;border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 0 12px;color:#9fd0ba}
 
-  @media(max-width:620px){
-    .stats{grid-template-columns:1fr 1fr}
-    .grid2{grid-template-columns:1fr}
-    .hero h1{font-size:22px}
-  }
+  @media(max-width:620px){.grid2{grid-template-columns:1fr}.hero h1{font-size:20px}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap bar">
-    <div class="logo"><span class="dot"></span> JinnRadar</div>
+    <div class="logo"><span class="dot"></span> JinnRadar · СОНАР</div>
     <div class="counter">
       <b id="globalCount">8 000 000 000</b>
       <span>джиннов на Земле (по преданиям)</span>
@@ -109,31 +97,32 @@
 
 <main class="wrap">
   <div class="hero">
-    <h1>Сколько джиннов рядом с тобой прямо сейчас? 🔮</h1>
-    <p>JinnRadar показывает на карте невидимый мир джиннов вокруг твоей локации.
-       Нажми «Сканировать» — и посмотри, кто рядом. Проект развлекательный, по мотивам исламских преданий.</p>
-    <button id="scan" class="scanbtn">📡 Сканировать рядом со мной</button>
+    <h1>Сонар джиннов 📡🔮</h1>
+    <p>Ты — в центре. Луч сонара сканирует пространство и ловит джиннов, которые движутся вокруг тебя.
+       Проект развлекательный, по мотивам исламских преданий.</p>
   </div>
 
-  <div class="mapwrap">
-    <div id="map"></div>
-    <div class="sweep" id="sweep">
-      <div class="ring"></div>
-      <div class="ring" style="animation-delay:.8s"></div>
-      <div class="ring" style="animation-delay:1.6s"></div>
+  <div class="radarbox">
+    <canvas id="radar"></canvas>
+    <div class="scan"></div>
+    <div class="startlay" id="startlay">
+      <div>
+        <div class="b">📡 Запустить сонар</div>
+        <small>определим твою позицию и включим звук</small>
+      </div>
     </div>
   </div>
 
-  <div class="stats">
-    <div class="stat"><div class="n" id="nNear">—</div><div class="l">джиннов в радиусе 3 км</div></div>
-    <div class="stat"><div class="n" id="nMuslim">—</div><div class="l">верующих (мусульман)</div></div>
-    <div class="stat"><div class="n" id="nStrong">—</div><div class="l">сильных (ифриты/мариды)</div></div>
+  <div class="hud">
+    <div class="chip">Контактов: <b id="nNear">—</b></div>
+    <div class="chip">Движутся: <b id="nMove">—</b></div>
+    <div class="chip">Сильных: <b id="nStrong">—</b></div>
+    <button class="mutebtn" id="mute">🔊 Звук вкл</button>
   </div>
 
-  <div class="list" id="list"></div>
+  <div class="log" id="log"></div>
 
   <div class="ad">
-    <!-- AdSense блок 1 -->
     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
       data-ad-slot="0000000000" data-ad-format="auto" data-full-width-responsive="true"></ins>
     <span>реклама</span>
@@ -161,7 +150,6 @@
   </section>
 
   <div class="ad">
-    <!-- AdSense блок 2 -->
     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
       data-ad-slot="1111111111" data-ad-format="auto" data-full-width-responsive="true"></ins>
     <span>реклама</span>
@@ -170,134 +158,230 @@
 
 <footer>
   <div class="wrap">
-    <div class="disc">⚠️ <b>Важно:</b> JinnRadar — это развлекательный проект. Он не «обнаруживает» реальных
-      джиннов — метки на карте генерируются программно для игры и интереса. Информация о джиннах приведена
-      с уважением, по мотивам исламских источников (Коран, хадисы) и народных преданий.</div>
+    <div class="disc">⚠️ <b>Важно:</b> JinnRadar — развлекательный проект. Он не «обнаруживает» реальных
+      джиннов — контакты на сонаре генерируются программно для игры и интереса. Информация о джиннах
+      приведена с уважением, по мотивам исламских источников (Коран, хадисы) и народных преданий.</div>
     © <span id="year"></span> JinnRadar · сделано для развлечения
   </div>
 </footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
-/* ---- глобальный счётчик ~8 млрд, слегка «дышит» ---- */
-(function(){
-  const el = document.getElementById('globalCount');
-  let base = 8_000_000_000;
-  function tick(){
-    const n = base + Math.floor((Math.sin(Date.now()/900)*0.5+0.5)*734219);
-    el.textContent = n.toLocaleString('ru-RU');
-  }
-  tick(); setInterval(tick, 1200);
-})();
+/* глобальный счётчик ~8 млрд */
+(function(){const el=document.getElementById('globalCount');const base=8000000000;
+  function tick(){const n=base+Math.floor((Math.sin(Date.now()/900)*0.5+0.5)*734219);
+    el.textContent=n.toLocaleString('ru-RU')}tick();setInterval(tick,1200)})();
 
-/* ---- детерминированный ГПСЧ, чтобы у одной точки был стабильный «набор» джиннов ---- */
-function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-function seedFrom(lat,lng){return Math.floor((lat*1e4))*73856093 ^ Math.floor((lng*1e4))*19349663}
+/* ---------- аудио сонара (Web Audio) ---------- */
+let actx=null, muted=false;
+function initAudio(){ if(actx) return; try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} }
+function ping(freq,dur,vol){
+  if(!actx||muted) return;
+  const t=actx.currentTime;
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type='sine'; o.frequency.setValueAtTime(freq,t);
+  o.frequency.exponentialRampToValueAtTime(Math.max(60,freq*0.55),t+dur);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(actx.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sonarPing=()=>ping(660,1.1,0.22);      // основной «пинг» за оборот
+const contactBlip=()=>ping(1350,0.10,0.06);  // короткий блип при обнаружении
 
+/* ---------- джинны ---------- */
 const TYPES=[
-  {key:'jinn',   nm:'Джинн',   emoji:'🧞', color:'#25e0a3', bg:'#0f2a20', strong:false, w:52},
-  {key:'shaytan',nm:'Шайтан',  emoji:'😈', color:'#ff7a90', bg:'#2a1420', strong:false, w:16},
-  {key:'ghul',   nm:'Гуль',    emoji:'👻', color:'#9aa7c7', bg:'#161d2e', strong:false, w:14},
-  {key:'ifrit',  nm:'Ифрит',   emoji:'🔥', color:'#ff6a3d', bg:'#2a170f', strong:true,  w:12},
-  {key:'marid',  nm:'Марид',   emoji:'🌀', color:'#7b5cff', bg:'#1a1533', strong:true,  w:6},
+  {nm:'Джинн',  emoji:'🧞', strong:false, w:50},
+  {nm:'Шайтан', emoji:'😈', strong:false, w:16},
+  {nm:'Гуль',   emoji:'👻', strong:false, w:14},
+  {nm:'Ифрит',  emoji:'🔥', strong:true,  w:12},
+  {nm:'Марид',  emoji:'🌀', strong:true,  w:8},
 ];
 const NAMES=['Зубайр','Харис','Даджал','Самум','Азазиль','Хабиб','Малик','Джафар','Сакар','Рахим',
-  'Ваcвас','Зафар','Хумам','Кабус','Насир','Джанан','Барзах','Тарик','Гассан','Заид','Фахир','Ханзала'];
+  'Васвас','Зафар','Хумам','Кабус','Насир','Джанан','Барзах','Тарик','Гассан','Заид','Фахир','Ханзала','Икрам','Сухайль'];
+function pickType(){let x=Math.random()*TYPES.reduce((s,t)=>s+t.w,0);for(const t of TYPES){if((x-=t.w)<0)return t}return TYPES[0]}
 
-function pickType(r){let x=r()* TYPES.reduce((s,t)=>s+t.w,0);for(const t of TYPES){if((x-=t.w)<0)return t}return TYPES[0]}
-
-/* ---- карта ---- */
-const map=L.map('map',{zoomControl:true,attributionControl:true}).setView([41.311,69.279],13); // Ташкент по умолчанию
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-  maxZoom:19, subdomains:'abcd',
-  attribution:'&copy; OpenStreetMap &copy; CARTO'
-}).addTo(map);
-
-let jinnLayer=L.layerGroup().addTo(map);
-let meMarker=null;
-
-function jinnIcon(t){
-  return L.divIcon({className:'',iconSize:[34,34],iconAnchor:[17,17],
-    html:`<div style="width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
-      font-size:18px;background:${t.bg};border:2px solid ${t.color};
-      box-shadow:0 0 12px ${t.color}66">${t.emoji}</div>`});
+const N=90;                     // плотность — много джиннов
+const blips=[];
+function makeBlip(){
+  return {
+    ang:Math.random()*Math.PI*2,          // азимут (радианы)
+    r:0.06+Math.random()*0.92,            // радиус 0..1
+    va:(Math.random()-0.5)*0.010,         // угловая скорость (движение)
+    vr:(Math.random()-0.5)*0.0016,        // радиальная скорость
+    t:pickType(),
+    muslim:Math.random()<0.42,
+    name:NAMES[Math.floor(Math.random()*NAMES.length)],
+    lit:0,                                // подсветка после прохода луча (0..1)
+    seen:false
+  };
 }
-function meIcon(){
-  return L.divIcon({className:'',iconSize:[22,22],iconAnchor:[11,11],
-    html:`<div style="width:16px;height:16px;border-radius:50%;background:#4c86ff;
-      border:3px solid #fff;box-shadow:0 0 0 6px #4c86ff44"></div>`});
-}
-function haversine(a,b,c,d){const R=6371,dl=(c-a)*Math.PI/180,dn=(d-b)*Math.PI/180;
-  const x=Math.sin(dl/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dn/2)**2;
-  return 2*R*Math.asin(Math.sqrt(x))}
+for(let i=0;i<N;i++) blips.push(makeBlip());
 
-function generate(lat,lng){
-  jinnLayer.clearLayers();
-  const rnd=mulberry32(seedFrom(lat,lng)>>>0);
-  const count=14+Math.floor(rnd()*20);           // 14..33 рядом
-  const arr=[];
-  for(let i=0;i<count;i++){
-    const ang=rnd()*Math.PI*2;
-    const dist=0.2+rnd()*2.8;                     // км, до ~3 км
-    const dLat=(dist/111)*Math.cos(ang);
-    const dLng=(dist/(111*Math.cos(lat*Math.PI/180)))*Math.sin(ang);
-    const t=pickType(rnd);
-    const muslim=rnd()<0.42;
-    const name=NAMES[Math.floor(rnd()*NAMES.length)];
-    const age=120+Math.floor(rnd()*1400);
-    const la=lat+dLat, ln=lng+dLng;
-    const km=haversine(lat,lng,la,ln);
-    L.marker([la,ln],{icon:jinnIcon(t)})
-      .bindPopup(`<b>${t.emoji} ${name}</b><br>${t.nm} · ${muslim?'мусульманин':'неверующий'}<br>Возраст: ${age} лет<br>${km.toFixed(2)} км от тебя`)
-      .addTo(jinnLayer);
-    arr.push({t,name,muslim,age,km});
+/* ---------- canvas ---------- */
+const cv=document.getElementById('radar'), ctx=cv.getContext('2d');
+let W=0,H=0,cx=0,cy=0,R=0,dpr=Math.min(window.devicePixelRatio||1,2);
+function resize(){
+  const rect=cv.getBoundingClientRect();
+  W=Math.round(rect.width*dpr); H=Math.round(rect.height*dpr);
+  cv.width=W; cv.height=H; cx=W/2; cy=H/2; R=Math.min(W,H)/2-6*dpr;
+}
+window.addEventListener('resize',resize);
+
+let sweep=-Math.PI/2;           // текущий угол луча
+let prevSweep=sweep;
+let running=false, last=0;
+const G='#22ff9b';
+
+function drawGrid(){
+  ctx.save();
+  // фон
+  const grd=ctx.createRadialGradient(cx,cy,R*0.05,cx,cy,R);
+  grd.addColorStop(0,'#0a3d29'); grd.addColorStop(1,'#021b12');
+  ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+  // кольца дальности
+  ctx.strokeStyle='rgba(34,255,155,0.28)'; ctx.lineWidth=1*dpr;
+  for(let i=1;i<=4;i++){ctx.beginPath();ctx.arc(cx,cy,R*i/4,0,7);ctx.stroke();}
+  // линии азимута
+  ctx.strokeStyle='rgba(34,255,155,0.16)';
+  for(let a=0;a<12;a++){const an=a*Math.PI/6;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(an)*R,cy+Math.sin(an)*R);ctx.stroke();}
+  // обод
+  ctx.strokeStyle='rgba(34,255,155,0.5)';ctx.lineWidth=2*dpr;
+  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();
+  // метки N/E/S/W
+  ctx.fillStyle='rgba(34,255,155,0.6)';ctx.font=`${12*dpr}px Consolas,monospace`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('С',cx,cy-R+11*dpr);ctx.fillText('Ю',cx,cy+R-11*dpr);
+  ctx.fillText('В',cx+R-11*dpr,cy);ctx.fillText('З',cx-R+11*dpr,cy);
+  ctx.restore();
+}
+function drawSweep(){
+  ctx.save();
+  ctx.translate(cx,cy);
+  // затухающий сектор позади луча
+  const steps=42, span=Math.PI*0.62;
+  for(let i=0;i<steps;i++){
+    const a=sweep-(i/steps)*span;
+    const alpha=(1-i/steps)*0.22;
+    ctx.strokeStyle=`rgba(34,255,155,${alpha})`;
+    ctx.lineWidth=2*dpr;
+    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*R,Math.sin(a)*R);ctx.stroke();
   }
-  arr.sort((a,b)=>a.km-b.km);
-  render(arr);
+  // яркая ведущая линия
+  ctx.strokeStyle=G; ctx.lineWidth=2.5*dpr; ctx.shadowColor=G; ctx.shadowBlur=14*dpr;
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(sweep)*R,Math.sin(sweep)*R);ctx.stroke();
+  ctx.restore();
+}
+function drawCenter(){
+  ctx.save();
+  const pr=(Math.sin(Date.now()/380)*0.5+0.5);
+  ctx.fillStyle=G; ctx.shadowColor=G; ctx.shadowBlur=16*dpr;
+  ctx.beginPath();ctx.arc(cx,cy,4.5*dpr,0,7);ctx.fill();
+  ctx.strokeStyle=`rgba(34,255,155,${0.5-pr*0.4})`;ctx.lineWidth=2*dpr;ctx.shadowBlur=0;
+  ctx.beginPath();ctx.arc(cx,cy,(8+pr*10)*dpr,0,7);ctx.stroke();
+  ctx.fillStyle='rgba(34,255,155,0.85)';ctx.font=`${10*dpr}px Consolas,monospace`;
+  ctx.textAlign='center';ctx.fillText('ТЫ',cx,cy+18*dpr);
+  ctx.restore();
+}
+function angDiff(a,b){let d=(a-b)%(Math.PI*2);if(d<-Math.PI)d+=Math.PI*2;if(d>Math.PI)d-=Math.PI*2;return d}
+
+let logQ=[], lastLog=0;
+function pushLog(b){
+  const brg=Math.round((b.ang*180/Math.PI+90+360)%360);
+  const km=(b.r*3).toFixed(2);
+  logQ.unshift(`<div class="ln">▸ КОНТАКТ: <b>${b.t.emoji} ${b.name}</b> · ${b.t.nm} · ${b.muslim?'муслим':'кафир'} · азимут ${brg}° · ${km} км</div>`);
+  if(logQ.length>7) logQ.pop();
+  document.getElementById('log').innerHTML=logQ.join('');
 }
 
-function render(arr){
-  document.getElementById('nNear').textContent=arr.length;
-  document.getElementById('nMuslim').textContent=arr.filter(a=>a.muslim).length;
-  document.getElementById('nStrong').textContent=arr.filter(a=>a.t.strong).length;
-  const list=document.getElementById('list');
-  list.innerHTML='';
-  arr.slice(0,12).forEach(a=>{
-    const el=document.createElement('div');el.className='card';
-    el.innerHTML=`<div class="ava" style="background:${a.t.bg};border:2px solid ${a.t.color}">${a.t.emoji}</div>
-      <div><div class="nm">${a.name}</div><div class="meta">${a.t.nm} · ${a.age} лет</div></div>
-      <span class="dist">${a.km.toFixed(2)} км</span>
-      <span class="badge ${a.muslim?'b-muslim':'b-kafir'}">${a.muslim?'мусульманин':'неверующий'}</span>`;
-    list.appendChild(el);
-  });
+function drawBlips(){
+  let detThisFrame=0;
+  for(const b of blips){
+    const x=cx+Math.cos(b.ang)*b.r*R, y=cy+Math.sin(b.ang)*b.r*R;
+    // прошёл ли луч через контакт с прошлого кадра?
+    const d1=angDiff(prevSweep,b.ang), d2=angDiff(sweep,b.ang);
+    if(d1<0 && d2>=0 && Math.abs(d2)<0.3){
+      b.lit=1; detThisFrame++;
+      if(!b.seen || Math.random()<0.15){ pushLog(b); b.seen=true; }
+    }
+    const base=0.16, a=Math.min(1, base+b.lit*0.9);
+    const rad=(b.t.strong?3.4:2.6)*dpr*(1+b.lit*0.7);
+    ctx.save();
+    ctx.fillStyle=`rgba(34,255,155,${a})`;
+    ctx.shadowColor=G; ctx.shadowBlur=(4+b.lit*14)*dpr;
+    ctx.beginPath();ctx.arc(x,y,rad,0,7);ctx.fill();
+    // при ярком проходе — эмодзи+имя
+    if(b.lit>0.55){
+      ctx.globalAlpha=(b.lit-0.55)/0.45;
+      ctx.shadowBlur=0;
+      ctx.font=`${13*dpr}px "Segoe UI Emoji",sans-serif`;ctx.textAlign='center';
+      ctx.fillText(b.t.emoji,x,y-10*dpr);
+      ctx.fillStyle='rgba(34,255,155,0.9)';ctx.font=`${9*dpr}px Consolas,monospace`;
+      ctx.fillText(b.name,x,y+12*dpr);
+    }
+    ctx.restore();
+  }
+  if(detThisFrame>0 && Date.now()-lastLog>90){ contactBlip(); lastLog=Date.now(); }
 }
 
-function sweep(on){document.getElementById('sweep').classList.toggle('on',on)}
-
-function scanAt(lat,lng){
-  sweep(true);
-  if(meMarker)map.removeLayer(meMarker);
-  meMarker=L.marker([lat,lng],{icon:meIcon()}).addTo(map).bindPopup('Ты здесь');
-  map.setView([lat,lng],14,{animate:true});
-  setTimeout(()=>{generate(lat,lng);sweep(false);
-    document.getElementById('scan').classList.remove('loading');
-    document.getElementById('scan').textContent='📡 Сканировать снова';},2200);
+function updateHUD(){
+  document.getElementById('nNear').textContent=blips.length;
+  document.getElementById('nMove').textContent=blips.filter(b=>Math.abs(b.va)>0.004||Math.abs(b.vr)>0.0007).length;
+  document.getElementById('nStrong').textContent=blips.filter(b=>b.t.strong).length;
 }
 
-document.getElementById('scan').addEventListener('click',()=>{
-  const b=document.getElementById('scan');b.classList.add('loading');b.textContent='Сканирую…';
-  if(!navigator.geolocation){scanAt(41.311,69.279);return}
-  navigator.geolocation.getCurrentPosition(
-    p=>scanAt(p.coords.latitude,p.coords.longitude),
-    ()=>scanAt(41.311,69.279),      // отказ/ошибка — Ташкент
-    {enableHighAccuracy:true,timeout:8000}
-  );
+function frame(ts){
+  if(!running) return;
+  const dt=Math.min(50,ts-last)||16; last=ts;
+  prevSweep=sweep;
+  sweep+=dt*0.0016;                      // скорость вращения луча
+  // пинг за оборот (когда луч пересекает верх, азимут -90°)
+  const target=-Math.PI/2;
+  if(angDiff(prevSweep,target)<0 && angDiff(sweep,target)>=0) sonarPing();
+  if(sweep>Math.PI) sweep-=Math.PI*2;
+
+  // движение джиннов
+  for(const b of blips){
+    b.ang+=b.va*dt/16;
+    b.r+=b.vr*dt/16;
+    if(b.r<0.05){b.r=0.05;b.vr=Math.abs(b.vr)}
+    if(b.r>0.98){b.r=0.98;b.vr=-Math.abs(b.vr)}
+    if(Math.random()<0.004){b.va+=(Math.random()-0.5)*0.004}
+    b.lit*=0.955;                         // затухание подсветки
+  }
+
+  ctx.clearRect(0,0,W,H);
+  drawGrid(); drawSweep(); drawBlips(); drawCenter();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- запуск ---------- */
+function startRadar(){
+  resize(); running=true; last=performance.now();
+  requestAnimationFrame(frame);
+  updateHUD();
+}
+document.getElementById('startlay').addEventListener('click',function(){
+  this.classList.add('hide');
+  initAudio(); if(actx&&actx.state==='suspended')actx.resume();
+  // геолокация — «определяем позицию» (радар абстрактный, ты всегда в центре)
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      p=>{ startRadar(); },
+      ()=>{ startRadar(); },
+      {enableHighAccuracy:true,timeout:6000}
+    );
+  } else startRadar();
 });
 
-/* показать демо сразу при загрузке (Ташкент), чтобы карта не была пустой */
-generate(41.311,69.279);
+document.getElementById('mute').addEventListener('click',function(){
+  muted=!muted; this.textContent=muted?'🔇 Звук выкл':'🔊 Звук вкл';
+});
+
+/* нарисовать статичный радар до старта (за оверлеем) */
+resize(); ctx.clearRect(0,0,W,H); drawGrid(); drawCenter();
 </script>
 </body>
 </html>
