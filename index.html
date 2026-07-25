@@ -253,7 +253,7 @@ function regen(){
   const out=[];
   for(let ty=y0;ty<=y1;ty++) for(let tx=x0;tx<=x1;tx++){
     const rnd=mulberry32(hash2(tx,ty));
-    const p=rnd(); let n=0; if(p<0.30)n=1; else if(p<0.36)n=2;
+    const p=rnd(); let n=0; if(p<0.40)n=1; else if(p<0.50)n=2;
     for(let k=0;k<n;k++){
       const baseLat=(ty+rnd())*STEP, baseLng=(tx+rnd())*STEP;
       const t=pickTypeR(rnd);
@@ -267,6 +267,11 @@ function regen(){
       const o=oldById[id]; if(o){j.lit=o.lit;j.seen=o.seen;}
       out.push(j);
     }
+  }
+  if(out.length>1500){                              // держим ближайшие 1500 (перф на больших радиусах)
+    const cl=Math.cos(toRad(user.lat));
+    for(const o of out){const dy=o.baseLat-user.lat, dx=(o.baseLng-user.lng)*cl; o._d=dx*dx+dy*dy;}
+    out.sort((a,b)=>a._d-b._d); out.length=1500;
   }
   jinns=out; genLat=user.lat; genLng=user.lng;
 }
@@ -316,7 +321,8 @@ function drawBlips(){
     if(b.t.strong) strong++;
   }
   vis.sort((a,c)=>a.km-c.km);
-  const draw=vis.length>DRAW_CAP?vis.slice(0,DRAW_CAP):vis;
+  let draw=vis;                                     // равномерно по дальности — от центра до края
+  if(vis.length>DRAW_CAP){const st=vis.length/DRAW_CAP;draw=[];for(let i=0;i<vis.length;i+=st)draw.push(vis[i|0]);}
   let det=0;
   for(const it of draw){
     const b=it.b, km=it.km, brg=it.brg;
