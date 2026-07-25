@@ -13,6 +13,8 @@
 Ставится в Планировщик на 09:00 (задача JinnRadarSEO).
 """
 import os, sys, json, time, ssl, urllib.request, urllib.parse, subprocess, datetime, re
+try: sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception: pass
 
 SITE = "https://jinnradar.com/"
 HOST = "jinnradar.com"
@@ -52,15 +54,21 @@ def measure_site():
     checks["score"]=score
     return {"http_status":code,"response_ms":ms}, checks
 
-def pagespeed(strategy):
+def lighthouse(desktop=False):
+    """Локальный Lighthouse через npx (без API-ключа). Возвращает балл performance 0..100."""
+    out=os.path.join(ROOT,"lh_tmp.json")
     try:
-        u=("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?"
-           +urllib.parse.urlencode({"url":SITE,"strategy":strategy,"category":"performance"}))
-        _,body=get(u, timeout=60)
-        j=json.loads(body)
-        s=j["lighthouseResult"]["categories"]["performance"]["score"]
-        return int(round(s*100))
-    except Exception as e:
+        try: os.remove(out)
+        except OSError: pass
+        cmd=('npx -y lighthouse@12 "%s" --only-categories=performance '
+             '--output=json --output-path="lh_tmp.json" --quiet '
+             '--chrome-flags="--headless=new --no-sandbox --disable-gpu"') % SITE
+        if desktop: cmd+=" --preset=desktop"
+        subprocess.run(cmd, cwd=ROOT, shell=True, timeout=200,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        d=json.load(open(out, encoding="utf-8"))
+        return int(round(d["categories"]["performance"]["score"]*100))
+    except Exception:
         return None
 
 def indexnow():
@@ -148,8 +156,8 @@ def main():
         "http_status": site["http_status"],
         "response_ms": site["response_ms"],
         "onpage": onpage,
-        "pagespeed_mobile": pagespeed("mobile"),
-        "pagespeed_desktop": pagespeed("desktop"),
+        "pagespeed_mobile": lighthouse(False),
+        "pagespeed_desktop": lighthouse(True),
         "indexnow": indexnow(),
     }
     update_sitemap()
@@ -162,7 +170,8 @@ def main():
     data["history"]=data["history"][-120:]
     json.dump(data, open(DATA,"w",encoding="utf-8"), ensure_ascii=False, indent=1)
     git_push()
-    print(entry["report"])
+    try: print(entry["report"])
+    except Exception: pass
     if not no_send:
         try: send_telegram(entry["report"])
         except Exception as e: print("tg fail:", e)

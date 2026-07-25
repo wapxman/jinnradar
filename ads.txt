@@ -1,0 +1,2 @@
+# Google AdSense — замените pub-XXXXXXXXXXXXXXXX на ваш реальный ID издателя после одобрения AdSense
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
