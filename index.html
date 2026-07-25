@@ -84,7 +84,16 @@
   .tile span{color:var(--muted);font-size:13px}
   .ad{margin:20px auto;max-width:728px;min-height:100px;background:#06291b;border:1px dashed var(--line);border-radius:14px;display:grid;place-items:center;color:#3f7a5f;font-size:13px}
   footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 0 40px;color:var(--muted);font-size:12px}
-  @media(max-width:620px){.grid2{grid-template-columns:1fr}.hero h1{font-size:20px}}
+  .rng{padding:6px 12px}
+  .rng.on{border-color:var(--acc);color:var(--acc);box-shadow:0 0 12px #22ff9b33}
+  .gps{max-width:560px;margin:12px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13px}
+  .gps .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+  .gps .grid > div{color:var(--muted);font-size:11px;line-height:1.4}
+  .gps .grid b{color:var(--text);font-size:14px;font-variant-numeric:tabular-nums}
+  .gps .hdr b{color:var(--acc)}
+  #gstatus.ok{color:var(--acc)} #gstatus.bad{color:#ff6a7a} #gstatus.mid{color:var(--warn)}
+  .gps .hint{margin-top:8px;font-size:12px;color:var(--warn);line-height:1.4}
+  @media(max-width:620px){.grid2{grid-template-columns:1fr}.hero h1{font-size:20px}.gps .grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -118,6 +127,25 @@
     <div class="chip">Скорость: <b id="spd">0</b> км/ч</div>
     <div class="chip" id="trk">🛰️ жду GPS…</div>
     <button class="mutebtn" id="mute">🔊 Звук вкл</button>
+  </div>
+  <div class="hud">
+    <span class="chip" style="color:var(--muted)">Радиус радара:</span>
+    <button class="mutebtn rng" data-km="0.3">300 м</button>
+    <button class="mutebtn rng on" data-km="1">1 км</button>
+    <button class="mutebtn rng" data-km="3">3 км</button>
+  </div>
+
+  <div class="gps" id="gps">
+    <div class="hdr">🛰️ <b>GPS-тест</b> — <span id="gstatus">жду разрешения…</span></div>
+    <div class="grid">
+      <div>Координаты<br><b id="gcoord">—</b></div>
+      <div>Точность<br><b id="gacc">—</b></div>
+      <div>Скорость<br><b id="gspd">—</b></div>
+      <div>Обновлений GPS<br><b id="gfix">0</b></div>
+      <div>Пройдено<br><b id="gdist">0 м</b></div>
+      <div>Последний фикс<br><b id="gage">—</b></div>
+    </div>
+    <div class="hint" id="ghint"></div>
   </div>
 
   <div class="log" id="log"></div>
@@ -200,8 +228,11 @@ const NAMES=['Зубайр','Харис','Даджал','Самум','Азази
   'Васвас','Зафар','Хумам','Кабус','Насир','Джанан','Барзах','Тарик','Гассан','Заид','Фахир','Ханзала','Икрам','Сухайль'];
 
 /* ---------- гео ---------- */
-const MAX_KM=3, STEP=0.0025;   // клетка мира ~0.0025° (≈210–280 м)
+let RANGE=1;                    // радиус радара, км (меняется кнопками; меньше = движение виднее)
+const STEP=0.001;               // клетка мира ~0.001° (≈75–110 м) — плотность выше
+const DRAW_CAP=150;             // максимум одновременно рисуемых джиннов (ближайшие)
 const toRad=d=>d*Math.PI/180, toDeg=r=>r*180/Math.PI;
+function fmtKm(k){return k<1?Math.round(k*1000)+' м':k.toFixed(2)+' км';}
 function haversineKm(la1,ln1,la2,ln2){const R=6371,dLa=toRad(la2-la1),dLn=toRad(ln2-ln1);
   const a=Math.sin(dLa/2)**2+Math.cos(toRad(la1))*Math.cos(toRad(la2))*Math.sin(dLn/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
 function bearingRad(la1,ln1,la2,ln2){const y=Math.sin(toRad(ln2-ln1))*Math.cos(toRad(la2));
@@ -215,22 +246,22 @@ const user={lat:41.311,lng:69.279,haveFix:false,speed:0};
 let jinns=[], genLat=null, genLng=null;
 function regen(){
   const oldById={}; for(const j of jinns) oldById[j.id]=j;
-  const range=MAX_KM*1.3;
+  const range=Math.max(0.4, RANGE*1.6);
   const rLat=range/111.32, rLng=range/(111.32*Math.cos(toRad(user.lat)));
   const y0=Math.floor((user.lat-rLat)/STEP), y1=Math.ceil((user.lat+rLat)/STEP);
   const x0=Math.floor((user.lng-rLng)/STEP), x1=Math.ceil((user.lng+rLng)/STEP);
   const out=[];
   for(let ty=y0;ty<=y1;ty++) for(let tx=x0;tx<=x1;tx++){
     const rnd=mulberry32(hash2(tx,ty));
-    const p=rnd(); let n=0; if(p<0.14)n=1; else if(p<0.17)n=2;
+    const p=rnd(); let n=0; if(p<0.30)n=1; else if(p<0.36)n=2;
     for(let k=0;k<n;k++){
       const baseLat=(ty+rnd())*STEP, baseLng=(tx+rnd())*STEP;
       const t=pickTypeR(rnd);
       const muslim=rnd()<0.42;
       const name=NAMES[Math.floor(rnd()*NAMES.length)];
       const phase=rnd()*6.283185;
-      const w=(0.03+rnd()*0.09)*(rnd()<0.5?1:-1);   // угловая скорость блуждания (рад/с)
-      const wr=0.02+rnd()*0.06;                     // радиус блуждания (км)
+      const w=(0.012+rnd()*0.04)*(rnd()<0.5?1:-1);  // угловая скорость блуждания (рад/с) — мягче
+      const wr=0.004+rnd()*0.02;                    // радиус блуждания (км) ≈4–24 м
       const id=tx+'_'+ty+'_'+k;
       const j={id,baseLat,baseLng,phase,w,wr,t,muslim,name,lit:0,seen:false};
       const o=oldById[id]; if(o){j.lit=o.lit;j.seen=o.seen;}
@@ -260,7 +291,7 @@ function drawGrid(){ctx.save();const g=ctx.createRadialGradient(cx,cy,R*0.05,cx,
   ctx.strokeStyle='rgba(34,255,155,0.16)';for(let a=0;a<12;a++){const an=a*Math.PI/6;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(an)*R,cy+Math.sin(an)*R);ctx.stroke();}
   ctx.strokeStyle='rgba(34,255,155,0.5)';ctx.lineWidth=2*dpr;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();
   ctx.fillStyle='rgba(34,255,155,0.4)';ctx.font=`${9*dpr}px Consolas,monospace`;ctx.textAlign='left';ctx.textBaseline='middle';
-  for(let i=1;i<=4;i++)ctx.fillText((MAX_KM*i/4).toFixed(2)+' км',cx+3*dpr,cy-R*i/4);
+  for(let i=1;i<=4;i++)ctx.fillText(fmtKm(RANGE*i/4),cx+3*dpr,cy-R*i/4);
   ctx.fillStyle='rgba(34,255,155,0.6)';ctx.font=`${12*dpr}px Consolas,monospace`;ctx.textAlign='center';
   ctx.fillText('С',cx,cy-R+11*dpr);ctx.fillText('Ю',cx,cy+R-11*dpr);ctx.fillText('В',cx+R-11*dpr,cy);ctx.fillText('З',cx-R+11*dpr,cy);ctx.restore();}
 function drawSweep(){ctx.save();ctx.translate(cx,cy);const steps=42,span=Math.PI*0.62;
@@ -276,14 +307,20 @@ function pushLog(b,km,brgDeg){logQ.unshift(`<div class="ln">▸ КОНТАКТ: 
   if(logQ.length>7)logQ.pop();document.getElementById('log').innerHTML=logQ.join('');}
 
 function drawBlips(){
-  const tSec=Date.now()/1000; let det=0,shown=0,strong=0;
+  const tSec=Date.now()/1000; const vis=[]; let strong=0;
   for(const b of jinns){
     const pos=jinnPos(b,tSec);
     const km=haversineKm(user.lat,user.lng,pos.lat,pos.lng);
-    if(km>MAX_KM){ b.lit*=0.9; continue; }
-    shown++; if(b.t.strong) strong++;
-    const brg=bearingRad(user.lat,user.lng,pos.lat,pos.lng);
-    const sa=brg-Math.PI/2, r=Math.min(1,km/MAX_KM);
+    if(km>RANGE){ b.lit*=0.9; continue; }
+    vis.push({b,km,brg:bearingRad(user.lat,user.lng,pos.lat,pos.lng)});
+    if(b.t.strong) strong++;
+  }
+  vis.sort((a,c)=>a.km-c.km);
+  const draw=vis.length>DRAW_CAP?vis.slice(0,DRAW_CAP):vis;
+  let det=0;
+  for(const it of draw){
+    const b=it.b, km=it.km, brg=it.brg;
+    const sa=brg-Math.PI/2, r=Math.min(1,km/RANGE);
     const x=cx+Math.cos(sa)*r*R, y=cy+Math.sin(sa)*r*R;
     const d1=angDiff(prevSweep,sa),d2=angDiff(sweep,sa);
     if(d1<0&&d2>=0&&Math.abs(d2)<0.3){b.lit=1;det++;
@@ -297,7 +334,7 @@ function drawBlips(){
   }
   for(const b of jinns) b.lit*=0.955;
   if(det>0&&Date.now()-lastLog>90){contactBlip();lastLog=Date.now();}
-  document.getElementById('nNear').textContent=shown;
+  document.getElementById('nNear').textContent=vis.length;
   document.getElementById('nStrong').textContent=strong;
   document.getElementById('spd').textContent=(user.speed||0).toFixed(1);
 }
@@ -308,24 +345,60 @@ function frame(ts){if(!running)return;const dt=Math.min(50,ts-last)||16;last=ts;
   if(sweep>Math.PI)sweep-=Math.PI*2;
   ctx.clearRect(0,0,W,H);drawGrid();drawSweep();drawBlips();drawCenter();requestAnimationFrame(frame);}
 
-/* ---------- GPS-слежение ---------- */
+/* ---------- GPS-слежение + диагностика ---------- */
 let prevFix=null;
-function onFix(p){const la=p.coords.latitude,ln=p.coords.longitude,tnow=p.timestamp||Date.now();
+const gps={fixes:0, dist:0, lastMs:0, acc:null};
+const el=id=>document.getElementById(id);
+function setStatus(cls,txt){const s=el('gstatus');s.className=cls;s.textContent=txt;}
+function onFix(p){
+  const la=p.coords.latitude, ln=p.coords.longitude, acc=p.coords.accuracy, tnow=p.timestamp||Date.now();
+  gps.fixes++; gps.lastMs=Date.now(); gps.acc=acc;
   let spd=(p.coords.speed!=null&&!isNaN(p.coords.speed))?p.coords.speed*3.6:null;
-  if(spd==null&&prevFix){const dkm=haversineKm(prevFix.la,prevFix.ln,la,ln),dh=(tnow-prevFix.t)/3600000;if(dh>0)spd=dkm/dh;}
+  if(prevFix){
+    const dkm=haversineKm(prevFix.la,prevFix.ln,la,ln);
+    gps.dist += dkm*1000;                                   // накопленный путь, м
+    if(spd==null){const dh=(tnow-prevFix.t)/3600000; if(dh>0) spd=dkm/dh;}
+  }
   let s=Math.max(0,spd||0); if(s>250)s=user.speed; user.speed=user.speed?user.speed*0.6+s*0.4:s;
-  user.lat=la;user.lng=ln;user.haveFix=true;prevFix={la,ln,t:tnow};
-  if(genLat==null||haversineKm(genLat,genLng,la,ln)>0.12) regen();  // пересчёт мира при заметном сдвиге
-  const trk=document.getElementById('trk');trk.classList.add('live');trk.textContent='🛰️ слежу за тобой';}
-function onErr(){document.getElementById('trk').textContent='🛰️ GPS недоступен'; if(genLat==null) regen();}
-function startTracking(){if(!navigator.geolocation){onErr();return;}
-  navigator.geolocation.getCurrentPosition(onFix,onErr,{enableHighAccuracy:true,timeout:8000});
-  navigator.geolocation.watchPosition(onFix,onErr,{enableHighAccuracy:true,maximumAge:1000,timeout:15000});}
+  user.lat=la; user.lng=ln; user.haveFix=true; prevFix={la,ln,t:tnow};
+  if(genLat==null||haversineKm(genLat,genLng,la,ln)>Math.max(0.03,RANGE*0.25)) regen();
+  const trk=el('trk'); trk.classList.add('live'); trk.textContent='🛰️ слежу за тобой';
+  el('gcoord').textContent=la.toFixed(5)+', '+ln.toFixed(5);
+  el('gacc').textContent=Math.round(acc)+' м';
+  el('gspd').textContent=(user.speed||0).toFixed(1)+' км/ч';
+  el('gfix').textContent=gps.fixes;
+  el('gdist').textContent=(gps.dist<1000?Math.round(gps.dist)+' м':(gps.dist/1000).toFixed(2)+' км');
+  refreshGpsStatus();
+}
+function refreshGpsStatus(){
+  const age=gps.lastMs?Math.round((Date.now()-gps.lastMs)/1000):null;
+  el('gage').textContent = age==null?'—':(age+' с назад');
+  const hint=el('ghint');
+  if(!gps.fixes){ setStatus('mid','жду первый фикс…'); hint.textContent=''; return; }
+  if(age!=null && age>12){ setStatus('bad','нет свежих фиксов — GPS «завис»');
+    hint.textContent='iPhone: Настройки → Конфиденциальность → Службы геолокации → Safari → «Точная геопозиция» ВКЛ; держи вкладку открытой и экран включённым.'; return; }
+  if(gps.acc!=null && gps.acc>120){ setStatus('mid','низкая точность ('+Math.round(gps.acc)+' м)');
+    hint.textContent='Включи ТОЧНУЮ геолокацию — сейчас телефон даёт приблизительную позицию, поэтому в движении кажется, что стоишь на месте.'; return; }
+  setStatus('ok','GPS работает ✅'); hint.textContent='Идёшь/едешь — «Пройдено» растёт, джинны смещаются. Для наглядности выбери радиус 300 м.';
+}
+function onErr(e){ setStatus('bad','GPS недоступен'); el('trk').textContent='🛰️ GPS недоступен';
+  el('ghint').textContent='Разреши доступ к геолокации для сайта (в адресной строке/настройках Safari).';
+  if(genLat==null) regen(); }
+function startTracking(){
+  if(!navigator.geolocation){ onErr(); return; }
+  navigator.geolocation.getCurrentPosition(onFix,onErr,{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+  navigator.geolocation.watchPosition(onFix,onErr,{enableHighAccuracy:true,maximumAge:0,timeout:20000});
+  setInterval(refreshGpsStatus,2000);
+}
 
 function startRadar(){resize();if(genLat==null)regen();running=true;last=performance.now();requestAnimationFrame(frame);}
 document.getElementById('startlay').addEventListener('click',function(){this.classList.add('hide');
   initAudio();if(actx&&actx.state==='suspended')actx.resume();startTracking();startRadar();});
 document.getElementById('mute').addEventListener('click',function(){muted=!muted;this.textContent=muted?'🔇 Звук выкл':'🔊 Звук вкл';});
+document.querySelectorAll('.rng').forEach(btn=>btn.addEventListener('click',function(){
+  document.querySelectorAll('.rng').forEach(b=>b.classList.remove('on'));
+  this.classList.add('on'); RANGE=parseFloat(this.dataset.km); regen();
+}));
 
 resize();ctx.clearRect(0,0,W,H);drawGrid();drawCenter();
 </script>
