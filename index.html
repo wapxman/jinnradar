@@ -52,6 +52,9 @@
   .bar{display:flex;align-items:center;gap:12px;height:58px}
   .logo{font-weight:800;font-size:19px;letter-spacing:.5px;display:flex;align-items:center;gap:8px;text-shadow:0 0 10px #22ff9b66}
   .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);animation:pulse 1.6s infinite}
+  #langSel{margin-left:auto;background:#04160f;color:#22ff9b;border:1px solid var(--acc);border-radius:10px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer;max-width:130px}
+  #langSel:hover{box-shadow:0 0 12px #22ff9b55}
+  @media(max-width:620px){#langSel{max-width:104px;padding:6px 8px;font-size:12px}}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
   .counter{margin-left:auto;text-align:right;line-height:1.1}
   .counter b{font-variant-numeric:tabular-nums;font-size:14px;color:var(--acc);text-shadow:0 0 8px #22ff9b55}
@@ -101,6 +104,27 @@
 <header>
   <div class="wrap bar">
     <div class="logo"><span class="dot"></span> JinnRadar · СОНАР</div>
+    <select id="langSel" aria-label="Язык / Language" title="Выбрать язык / Choose language"
+      onchange="if(this.value)location.href=this.value">
+      <option value="">🌐 Язык</option>
+      <option value="/l/en.html">English</option>
+      <option value="/l/ru.html">Русский</option>
+      <option value="/l/uz.html">Oʻzbekcha</option>
+      <option value="/l/ar.html">العربية</option>
+      <option value="/l/tr.html">Türkçe</option>
+      <option value="/l/fa.html">فارسی</option>
+      <option value="/l/ur.html">اردو</option>
+      <option value="/l/hi.html">हिन्दी</option>
+      <option value="/l/id.html">Indonesia</option>
+      <option value="/l/es.html">Español</option>
+      <option value="/l/fr.html">Français</option>
+      <option value="/l/de.html">Deutsch</option>
+      <option value="/l/pt.html">Português</option>
+      <option value="/l/zh-Hans.html">简体中文</option>
+      <option value="/l/ja.html">日本語</option>
+      <option value="/l/ko.html">한국어</option>
+      <option value="/l/">🌍 Все языки (50) →</option>
+    </select>
     <div class="counter"><b id="globalCount">8 000 000 000</b><span>джиннов на Земле · единый счётчик</span></div>
   </div>
 </header>
