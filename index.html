@@ -10,6 +10,24 @@
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <meta name="theme-color" content="#02100b" />
 <link rel="canonical" href="https://jinnradar.com/" />
+<!-- hreflang: языковые варианты главной через ?lang= (краулер видит без JS) -->
+<link rel="alternate" hreflang="x-default" href="https://jinnradar.com/" />
+<link rel="alternate" hreflang="ru" href="https://jinnradar.com/" />
+<link rel="alternate" hreflang="en" href="https://jinnradar.com/?lang=en" />
+<link rel="alternate" hreflang="uz" href="https://jinnradar.com/?lang=uz" />
+<link rel="alternate" hreflang="ar" href="https://jinnradar.com/?lang=ar" />
+<link rel="alternate" hreflang="tr" href="https://jinnradar.com/?lang=tr" />
+<link rel="alternate" hreflang="fa" href="https://jinnradar.com/?lang=fa" />
+<link rel="alternate" hreflang="ur" href="https://jinnradar.com/?lang=ur" />
+<link rel="alternate" hreflang="id" href="https://jinnradar.com/?lang=id" />
+<link rel="alternate" hreflang="hi" href="https://jinnradar.com/?lang=hi" />
+<link rel="alternate" hreflang="es" href="https://jinnradar.com/?lang=es" />
+<link rel="alternate" hreflang="fr" href="https://jinnradar.com/?lang=fr" />
+<link rel="alternate" hreflang="de" href="https://jinnradar.com/?lang=de" />
+<link rel="alternate" hreflang="pt" href="https://jinnradar.com/?lang=pt" />
+<link rel="alternate" hreflang="zh-Hans" href="https://jinnradar.com/?lang=zh-Hans" />
+<link rel="alternate" hreflang="ja" href="https://jinnradar.com/?lang=ja" />
+<link rel="alternate" hreflang="ko" href="https://jinnradar.com/?lang=ko" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -290,6 +308,26 @@ function T(k){var c=I18N[LANG];return (c&&c[k]!=null)?c[k]:(I18N.en[k]!=null?I18
   document.querySelectorAll('[data-i18n]').forEach(function(el){var v=T(el.getAttribute('data-i18n'));if(v!=null)el.textContent=v;});
   document.querySelectorAll('[data-i18n-html]').forEach(function(el){var v=T(el.getAttribute('data-i18n-html'));if(v!=null)el.innerHTML=v;});
   var sel=document.getElementById('langSel');if(sel){for(var i=0;i<sel.options.length;i++){if(sel.options[i].value==='/?lang='+LANG)sel.selectedIndex=i;}}
+})();
+
+/* ---------- SEO под язык: локализуем title/description/canonical/OG при ?lang= ----------
+   Русский (LANG==='ru') оставляем на статическом SEO-тексте из <head> — он проработан вручную.
+   Для остальных строим заголовок/описание из уже переведённых строк h1/lead (нулевой риск перевода). */
+(function(){
+  if(LANG==='ru')return;
+  function strip(s){return String(s==null?'':s).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();}
+  var ttl=strip(T('h1'))+' — JinnRadar';
+  var desc=strip(T('lead'));
+  if(ttl)document.title=ttl;
+  function setMeta(sel,val){if(!val)return;var m=document.querySelector(sel);if(m)m.setAttribute('content',val);}
+  setMeta('meta[name="description"]',desc);
+  setMeta('meta[property="og:title"]',ttl);
+  setMeta('meta[property="og:description"]',desc);
+  setMeta('meta[name="twitter:title"]',ttl);
+  setMeta('meta[name="twitter:description"]',desc);
+  var u='https://jinnradar.com/?lang='+LANG;
+  var can=document.querySelector('link[rel="canonical"]');if(can)can.setAttribute('href',u);
+  var ogu=document.querySelector('meta[property="og:url"]');if(ogu)ogu.setAttribute('content',u);
 })();
 
 /* ---------- «Поделиться» / «Позвать друга» (виральность): Web Share API + fallback на копирование ---------- */
