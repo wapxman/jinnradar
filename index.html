@@ -378,8 +378,13 @@ function T(k){var c=I18N[LANG];return (c&&c[k]!=null)?c[k]:(I18N.en[k]!=null?I18
 (function(){try{
   if(sessionStorage.getItem('jrh'))return; sessionStorage.setItem('jrh','1');
   var A='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3em1jaWh3dHdnamFqampzYm1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTQ0MzksImV4cCI6MjA5MTA3MDQzOX0.X4UnLTta5Pm70sOwZkwJgvA8EkQtJPDmsn-2dMlkqjA';
-  fetch('https://zwzmcihwtwgjajjjsbms.supabase.co/rest/v1/rpc/jr_hit',{method:'POST',
-    headers:{'apikey':A,'Authorization':'Bearer '+A,'Content-Type':'application/json'},body:'{}'});
+  var H={'apikey':A,'Authorization':'Bearer '+A,'Content-Type':'application/json'};
+  var U='https://zwzmcihwtwgjajjjsbms.supabase.co/rest/v1/rpc/';
+  fetch(U+'jr_hit',{method:'POST',headers:H,body:'{}'});
+  /* сквозная аналитика источника: считаем визит по utm_source (share/invite/tiktok/…),
+     без utm — 'direct'. Отдельная таблица jr_source, KPI-счётчик jr_hits не трогаем. */
+  try{var src=(new URLSearchParams(location.search).get('utm_source')||'direct');
+    fetch(U+'jr_hit_src',{method:'POST',headers:H,body:JSON.stringify({src:src})});}catch(e){}
 }catch(e){}})();
 
 /* ---------- звук сонара ---------- */
