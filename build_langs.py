@@ -8,6 +8,8 @@
 После — git push (Vercel задеплоит) и IndexNow-пинг.
 """
 import os
+import json
+import html as _html
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://jinnradar.com/"
@@ -85,6 +87,73 @@ SHARE = {
 "ha":("📤 Raba","An kwafi mahaɗi ✅"),
 }
 
+# FAQ для лендингов: НАТИВНЫЕ Q&A (видимый блок + FAQPage JSON-LD должны совпадать
+# по правилам Google). Языки без записи FAQ не получают блок — никаких смешанных языков.
+# Заголовок «FAQ» и подписи вопросов остаются в контенте пар. Ключ "t" — заголовок секции.
+FAQ = {
+"en": ("FAQ", [
+  ("Is JinnRadar real?", "No. JinnRadar is an entertainment project inspired by Islamic lore. The jinn on the radar are generated for fun — it does not really detect anything."),
+  ("Is JinnRadar free?", "Yes, JinnRadar is completely free. Just open it in your browser and allow location access to see the sonar.")]),
+"ru": ("Частые вопросы", [
+  ("Радар джиннов работает по-настоящему?", "Нет. JinnRadar — развлекательный проект по мотивам исламских преданий. Джинны на радаре генерируются для развлечения — на самом деле он ничего не обнаруживает."),
+  ("JinnRadar бесплатный?", "Да, JinnRadar полностью бесплатный. Просто откройте его в браузере и разрешите доступ к геолокации, чтобы увидеть сонар.")]),
+"ar": ("الأسئلة الشائعة", [
+  ("هل رادار الجن حقيقي؟", "لا. جِن رادار مشروع ترفيهي مستوحى من التراث الإسلامي. الجن الظاهر على الرادار مُولَّد للتسلية — وهو لا يكتشف شيئًا في الواقع."),
+  ("هل جِن رادار مجاني؟", "نعم، جِن رادار مجاني تمامًا. افتحه في متصفحك واسمح بالوصول إلى موقعك لرؤية السونار.")]),
+"tr": ("Sıkça Sorulan Sorular", [
+  ("Cin Radarı gerçek mi?", "Hayır. JinnRadar, İslami folklordan esinlenen bir eğlence projesidir. Radardaki cinler eğlence için üretilir — gerçekte hiçbir şey tespit etmez."),
+  ("JinnRadar ücretsiz mi?", "Evet, JinnRadar tamamen ücretsizdir. Tarayıcında aç ve sonarı görmek için konum iznini ver.")]),
+"fa": ("پرسش‌های متداول", [
+  ("آیا رادار جن واقعی است؟", "خیر. جِن‌رادار یک پروژه سرگرمی الهام‌گرفته از باورهای اسلامی است. جن‌های روی رادار برای سرگرمی ساخته می‌شوند — در واقع چیزی را شناسایی نمی‌کند."),
+  ("آیا جِن‌رادار رایگان است؟", "بله، جِن‌رادار کاملاً رایگان است. کافی است آن را در مرورگر باز کنید و اجازه دسترسی به موقعیت مکانی را بدهید تا سونار را ببینید.")]),
+"ur": ("عام سوالات", [
+  ("کیا جن ریڈار حقیقی ہے؟", "نہیں۔ جن ریڈار اسلامی روایات سے متاثر ایک تفریحی منصوبہ ہے۔ ریڈار پر نظر آنے والے جن تفریح کے لیے بنائے جاتے ہیں — یہ حقیقت میں کچھ نہیں ڈھونڈتا۔"),
+  ("کیا جن ریڈار مفت ہے؟", "جی ہاں، جن ریڈار بالکل مفت ہے۔ اسے اپنے براؤزر میں کھولیں اور سونار دیکھنے کے لیے لوکیشن کی اجازت دیں۔")]),
+"id": ("Pertanyaan Umum", [
+  ("Apakah Radar Jin nyata?", "Tidak. JinnRadar adalah proyek hiburan yang terinspirasi cerita rakyat Islam. Jin di radar dibuat untuk hiburan — ia tidak benar-benar mendeteksi apa pun."),
+  ("Apakah JinnRadar gratis?", "Ya, JinnRadar sepenuhnya gratis. Cukup buka di browser dan izinkan akses lokasi untuk melihat sonar.")]),
+"uz": ("Koʻp beriladigan savollar", [
+  ("Jin radari haqiqiymi?", "Yoʻq. JinnRadar islom rivoyatlaridan ilhomlangan koʻngilochar loyiha. Radardagi jinlar koʻngilochar uchun yaratilgan — u aslida hech narsani aniqlamaydi."),
+  ("JinnRadar bepulmi?", "Ha, JinnRadar butunlay bepul. Uni brauzerda oching va sonarni koʻrish uchun joylashuvga ruxsat bering.")]),
+"es": ("Preguntas frecuentes", [
+  ("¿El Radar de Yinn es real?", "No. JinnRadar es un proyecto de entretenimiento inspirado en el folclore islámico. Los yinn del radar se generan por diversión — en realidad no detecta nada."),
+  ("¿JinnRadar es gratis?", "Sí, JinnRadar es completamente gratis. Solo ábrelo en tu navegador y permite el acceso a la ubicación para ver el sonar.")]),
+"fr": ("Foire aux questions", [
+  ("Le Radar à Djinns est-il réel ?", "Non. JinnRadar est un projet de divertissement inspiré du folklore islamique. Les djinns du radar sont générés pour s'amuser — il ne détecte rien en réalité."),
+  ("JinnRadar est-il gratuit ?", "Oui, JinnRadar est entièrement gratuit. Ouvrez-le simplement dans votre navigateur et autorisez la localisation pour voir le sonar.")]),
+"de": ("Häufige Fragen", [
+  ("Ist das Dschinn-Radar echt?", "Nein. JinnRadar ist ein Unterhaltungsprojekt, inspiriert von der islamischen Überlieferung. Die Dschinn auf dem Radar werden zum Spaß erzeugt — es erkennt in Wirklichkeit nichts."),
+  ("Ist JinnRadar kostenlos?", "Ja, JinnRadar ist völlig kostenlos. Öffne es einfach im Browser und erlaube den Standortzugriff, um das Sonar zu sehen.")]),
+"pt": ("Perguntas frequentes", [
+  ("O Radar de Jinn é real?", "Não. O JinnRadar é um projeto de entretenimento inspirado no folclore islâmico. Os jinn no radar são gerados para diversão — ele não detecta nada de verdade."),
+  ("O JinnRadar é gratuito?", "Sim, o JinnRadar é totalmente gratuito. Basta abrir no navegador e permitir o acesso à localização para ver o sonar.")]),
+"hi": ("अक्सर पूछे जाने वाले सवाल", [
+  ("क्या जिन्न रडार असली है?", "नहीं। JinnRadar इस्लामी लोककथाओं से प्रेरित एक मनोरंजन परियोजना है। रडार पर दिखने वाले जिन्न मनोरंजन के लिए बनाए जाते हैं — यह वास्तव में कुछ भी पता नहीं लगाता।"),
+  ("क्या JinnRadar मुफ़्त है?", "हाँ, JinnRadar पूरी तरह मुफ़्त है। बस इसे अपने ब्राउज़र में खोलें और सोनार देखने के लिए लोकेशन की अनुमति दें।")]),
+}
+
+
+def faq_blocks(code):
+    """Возвращает (visible_html, jsonld_script) для языка или ('','') если FAQ нет."""
+    entry = FAQ.get(code)
+    if not entry:
+        return "", ""
+    title, pairs = entry
+    qa = "".join(
+        f'<div class="qa"><h3>{_html.escape(q)}</h3><p>{_html.escape(a)}</p></div>'
+        for q, a in pairs
+    )
+    visible = f'<section class="faq"><h2>{_html.escape(title)}</h2>{qa}</section>'
+    ld = {"@context": "https://schema.org", "@type": "FAQPage",
+          "mainEntity": [
+              {"@type": "Question", "name": q,
+               "acceptedAnswer": {"@type": "Answer", "text": a}}
+              for q, a in pairs]}
+    script = ('<script type="application/ld+json">'
+              + json.dumps(ld, ensure_ascii=False) + '</script>')
+    return visible, script
+
+
 TPL = """<!doctype html>
 <html lang="{code}" dir="{dir}">
 <head>
@@ -102,6 +171,7 @@ TPL = """<!doctype html>
 {alts}
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3980078996117020" crossorigin="anonymous"></script>
 <script type="application/ld+json">{{"@context":"https://schema.org","@type":"WebApplication","name":"JinnRadar","inLanguage":"{code}","applicationCategory":"EntertainmentApplication","operatingSystem":"Web","offers":{{"@type":"Offer","price":"0"}},"url":"{site}l/{code}.html"}}</script>
+{faq_ld}
 <style>
   body{{margin:0;background:#02100b;color:#c8ffe6;font-family:"Segoe UI",Roboto,sans-serif;line-height:1.7}}
   a{{color:#22ff9b;text-decoration:none}}.wrap{{max-width:720px;margin:0 auto;padding:24px 18px}}
@@ -111,6 +181,11 @@ TPL = """<!doctype html>
   .cta{{display:block;text-align:center;background:linear-gradient(135deg,#22ff9b,#12b98a);color:#04120c;font-weight:800;padding:18px;border-radius:14px;margin:26px 0;font-size:18px;box-shadow:0 8px 30px #25e0a355}}
   .share{{display:block;width:100%;text-align:center;background:transparent;color:#22ff9b;border:1px solid #22ff9b;font-weight:700;padding:14px;border-radius:14px;margin:-12px 0 20px;font-size:16px;cursor:pointer;font-family:inherit}}
   .share:hover{{background:#0a2418}}
+  .faq{{border-top:1px solid #0f4d34;margin-top:8px;padding-top:14px}}
+  .faq h2{{font-size:20px;color:#e7fff2;margin:0 0 6px}}
+  .faq .qa{{margin:14px 0}}
+  .faq h3{{font-size:16px;color:#22ff9b;margin:0 0 4px}}
+  .faq .qa p{{margin:0;font-size:15px;color:#bfe9d4}}
   .langs{{border-top:1px solid #0f4d34;margin-top:26px;padding-top:14px;font-size:13px;line-height:2.2;color:#7fbfa0}}
   .langs a{{color:#8fd9bb;margin-inline-end:6px}}
   footer{{border-top:1px solid #0f4d34;margin-top:18px;padding:16px 0;color:#5fae86;font-size:12px}}
@@ -124,6 +199,7 @@ TPL = """<!doctype html>
 <p>{p2}</p>
 <a class="cta" href="{site}">{cta}</a>
 <button class="share" id="shareBtn" data-copied="{share_ok}">{share}</button>
+{faq_section}
 <div class="langs"><b style="color:#c8ffe6">🌍 Languages:</b><br>{switch}</div>
 <footer>© <span id="y"></span> JinnRadar</footer>
 </div>
@@ -152,9 +228,10 @@ def build():
     for c in codes:
         name, d, title, desc, h1, p1, p2, cta = LANGS[c]
         sh, sh_ok = SHARE.get(c, SHARE["en"])
+        faq_section, faq_ld = faq_blocks(c)
         html = TPL.format(code=c, dir=d, title=title, desc=desc, h1=h1, p1=p1, p2=p2,
                           cta=cta, site=SITE, anon=ANON, alts=alts, switch=switch,
-                          share=sh, share_ok=sh_ok)
+                          share=sh, share_ok=sh_ok, faq_section=faq_section, faq_ld=faq_ld)
         open(os.path.join(ldir, f"{c}.html"), "w", encoding="utf-8").write(html)
     # языковой хаб /l/index.html
     hub_cards = "\n".join(
