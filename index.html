@@ -103,36 +103,36 @@
 
 <header>
   <div class="wrap bar">
-    <div class="logo"><span class="dot"></span> JinnRadar · СОНАР</div>
+    <div class="logo"><span class="dot"></span> JinnRadar · <span data-i18n="tag">СОНАР</span></div>
     <select id="langSel" aria-label="Язык / Language" title="Выбрать язык / Choose language"
       onchange="if(this.value)location.href=this.value">
       <option value="">🌐 Язык</option>
-      <option value="/l/en.html">English</option>
-      <option value="/l/ru.html">Русский</option>
-      <option value="/l/uz.html">Oʻzbekcha</option>
-      <option value="/l/ar.html">العربية</option>
-      <option value="/l/tr.html">Türkçe</option>
-      <option value="/l/fa.html">فارسی</option>
-      <option value="/l/ur.html">اردو</option>
-      <option value="/l/hi.html">हिन्दी</option>
-      <option value="/l/id.html">Indonesia</option>
-      <option value="/l/es.html">Español</option>
-      <option value="/l/fr.html">Français</option>
-      <option value="/l/de.html">Deutsch</option>
-      <option value="/l/pt.html">Português</option>
-      <option value="/l/zh-Hans.html">简体中文</option>
-      <option value="/l/ja.html">日本語</option>
-      <option value="/l/ko.html">한국어</option>
+      <option value="/?lang=en">English</option>
+      <option value="/?lang=ru">Русский</option>
+      <option value="/?lang=uz">Oʻzbekcha</option>
+      <option value="/?lang=ar">العربية</option>
+      <option value="/?lang=tr">Türkçe</option>
+      <option value="/?lang=fa">فارسی</option>
+      <option value="/?lang=ur">اردو</option>
+      <option value="/?lang=id">Indonesia</option>
+      <option value="/?lang=hi">हिन्दी</option>
+      <option value="/?lang=es">Español</option>
+      <option value="/?lang=fr">Français</option>
+      <option value="/?lang=de">Deutsch</option>
+      <option value="/?lang=pt">Português</option>
+      <option value="/?lang=zh-Hans">简体中文</option>
+      <option value="/?lang=ja">日本語</option>
+      <option value="/?lang=ko">한국어</option>
       <option value="/l/">🌍 Все языки (50) →</option>
     </select>
-    <div class="counter"><b id="globalCount">8 000 000 000</b><span>джиннов на Земле · единый счётчик</span></div>
+    <div class="counter"><b id="globalCount">8 000 000 000</b><span data-i18n="onEarth">джиннов на Земле · единый счётчик</span></div>
   </div>
 </header>
 
 <main class="wrap">
   <div class="hero">
-    <h1>Сонар джиннов 📡🔮</h1>
-    <p>Мир джиннов <b>единый для всех</b>: кто рядом с тобой — видит тех же джиннов на тех же местах.
+    <h1 data-i18n="h1">Сонар джиннов 📡🔮</h1>
+    <p data-i18n-html="lead">Мир джиннов <b>единый для всех</b>: кто рядом с тобой — видит тех же джиннов на тех же местах.
        Ты в центре, едешь — радар следит по GPS, и мир проплывает мимо.</p>
   </div>
 
@@ -140,34 +140,34 @@
     <canvas id="radar"></canvas>
     <div class="scan"></div>
     <div class="startlay" id="startlay">
-      <div><div class="b">📡 Запустить сонар</div>
-        <small>разреши геолокацию — радар будет следить за тобой</small></div>
+      <div><div class="b" data-i18n="startBtn">📡 Запустить сонар</div>
+        <small data-i18n="startHint">разреши геолокацию — радар будет следить за тобой</small></div>
     </div>
   </div>
 
   <div class="hud">
-    <div class="chip">Контактов: <b id="nNear">—</b></div>
-    <div class="chip">Сильных: <b id="nStrong">—</b></div>
-    <div class="chip">Скорость: <b id="spd">0</b> км/ч</div>
-    <div class="chip" id="trk">🛰️ жду GPS…</div>
-    <button class="mutebtn" id="mute">🔊 Звук вкл</button>
+    <div class="chip"><span data-i18n="contacts">Контактов:</span> <b id="nNear">—</b></div>
+    <div class="chip"><span data-i18n="strong">Сильных:</span> <b id="nStrong">—</b></div>
+    <div class="chip"><span data-i18n="speed">Скорость:</span> <b id="spd">0</b> <span data-i18n="kmh">км/ч</span></div>
+    <div class="chip" id="trk" data-i18n="waitGps">🛰️ жду GPS…</div>
+    <button class="mutebtn" id="mute" data-i18n="soundOn">🔊 Звук вкл</button>
   </div>
   <div class="hud">
-    <span class="chip" style="color:var(--muted)">Радиус радара:</span>
-    <button class="mutebtn rng" data-km="0.3">300 м</button>
-    <button class="mutebtn rng on" data-km="1">1 км</button>
-    <button class="mutebtn rng" data-km="3">3 км</button>
+    <span class="chip" style="color:var(--muted)" data-i18n="radius">Радиус радара:</span>
+    <button class="mutebtn rng" data-km="0.3">300 <span data-i18n="unitM">м</span></button>
+    <button class="mutebtn rng on" data-km="1">1 <span data-i18n="unitKm">км</span></button>
+    <button class="mutebtn rng" data-km="3">3 <span data-i18n="unitKm">км</span></button>
   </div>
 
   <div class="gps" id="gps">
-    <div class="hdr">🛰️ <b>GPS-тест</b> — <span id="gstatus">жду разрешения…</span></div>
+    <div class="hdr">🛰️ <b data-i18n="gpsTest">GPS-тест</b> — <span id="gstatus" data-i18n="stWait">жду разрешения…</span></div>
     <div class="grid">
-      <div>Координаты<br><b id="gcoord">—</b></div>
-      <div>Точность<br><b id="gacc">—</b></div>
-      <div>Скорость<br><b id="gspd">—</b></div>
-      <div>Обновлений GPS<br><b id="gfix">0</b></div>
-      <div>Пройдено<br><b id="gdist">0 м</b></div>
-      <div>Последний фикс<br><b id="gage">—</b></div>
+      <div><span data-i18n="lblCoord">Координаты</span><br><b id="gcoord">—</b></div>
+      <div><span data-i18n="lblAcc">Точность</span><br><b id="gacc">—</b></div>
+      <div><span data-i18n="lblSpeed">Скорость</span><br><b id="gspd">—</b></div>
+      <div><span data-i18n="lblFixes">Обновлений GPS</span><br><b id="gfix">0</b></div>
+      <div><span data-i18n="lblDist">Пройдено</span><br><b id="gdist">0 м</b></div>
+      <div><span data-i18n="lblLastFix">Последний фикс</span><br><b id="gage">—</b></div>
     </div>
     <div class="hint" id="ghint"></div>
   </div>
@@ -212,14 +212,14 @@
 
 <footer><div class="wrap">
   <div style="margin-bottom:12px">
-    <b style="color:#e7fff2">Полезное о джиннах:</b><br>
+    <b style="color:#e7fff2" data-i18n="usefulLabel">Полезное о джиннах:</b><br>
     <a href="/g/dzhinny-v-islame.html" style="color:#22ff9b">Джинны в Исламе</a> ·
     <a href="/g/vidy-dzhinnov.html" style="color:#22ff9b">Виды джиннов</a> ·
     <a href="/g/kak-uznat-dzhinna.html" style="color:#22ff9b">Как узнать, есть ли рядом джинн</a> ·
     <a href="/g/kak-zashchititsya-ot-dzhinnov.html" style="color:#22ff9b">Как защититься</a> ·
     <a href="/g/dzhinn-v-dome-priznaki.html" style="color:#22ff9b">Джинн в доме</a> ·
     <a href="/g/jinlar-haqida.html" style="color:#22ff9b">Jinlar haqida</a> ·
-    <a href="/g/" style="color:#22ff9b"><b>Все статьи →</b></a>
+    <a href="/g/" style="color:#22ff9b"><b data-i18n="allArticles">Все статьи →</b></a>
   </div>
   <div style="margin-bottom:12px">
     <a href="/l/" style="color:#22ff9b">🌍 JinnRadar in your language — 50 languages / на других языках</a>
@@ -229,6 +229,30 @@
 
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
+
+/* ================= i18n интерфейса радара =================
+   Язык берётся из ?lang= (сохраняется в localStorage) или из localStorage, иначе ru.
+   Кнопка языка в шапке ведёт на /?lang=<код>. Недостающие строки берутся из en, затем ru. */
+const I18N={
+ru:{tag:"СОНАР",onEarth:"джиннов на Земле · единый счётчик",h1:"Сонар джиннов 📡🔮",lead:"Мир джиннов <b>единый для всех</b>: кто рядом с тобой — видит тех же джиннов на тех же местах. Ты в центре, едешь — радар следит по GPS, и мир проплывает мимо.",startBtn:"📡 Запустить сонар",startHint:"разреши геолокацию — радар будет следить за тобой",contacts:"Контактов:",strong:"Сильных:",speed:"Скорость:",kmh:"км/ч",waitGps:"🛰️ жду GPS…",tracking:"🛰️ слежу за тобой",gpsUnavail:"🛰️ GPS недоступен",soundOn:"🔊 Звук вкл",soundOff:"🔇 Звук выкл",radius:"Радиус радара:",unitM:"м",unitKm:"км",gpsTest:"GPS-тест",stWait:"жду разрешения…",stFirst:"жду первый фикс…",stFrozen:"нет свежих фиксов — GPS «завис»",stLowAcc:"низкая точность",stOk:"GPS работает ✅",hintFrozen:"iPhone: Настройки → Конфиденциальность → Службы геолокации → Safari → «Точная геопозиция» ВКЛ; держи вкладку открытой и экран включённым.",hintLowAcc:"Включи ТОЧНУЮ геолокацию — сейчас телефон даёт приблизительную позицию, поэтому в движении кажется, что стоишь на месте.",hintOk:"Идёшь/едешь — «Пройдено» растёт, джинны смещаются. Для наглядности выбери радиус 300 м.",hintErr:"Разреши доступ к геолокации для сайта (в адресной строке/настройках Safari).",lblCoord:"Координаты",lblAcc:"Точность",lblSpeed:"Скорость",lblFixes:"Обновлений GPS",lblDist:"Пройдено",lblLastFix:"Последний фикс",ago:"с назад",logContact:"КОНТАКТ",muslim:"муслим",kafir:"кафир",azimuth:"азимут",N:"С",S:"Ю",E:"В",W:"З",you:"ТЫ",usefulLabel:"Полезное о джиннах:",allArticles:"Все статьи →",t_jinn:"Джинн",t_shaytan:"Шайтан",t_ghoul:"Гуль",t_ifrit:"Ифрит",t_marid:"Марид"},
+en:{tag:"SONAR",onEarth:"jinn on Earth · shared live counter",h1:"Jinn Sonar 📡🔮",lead:"The world of jinn is <b>the same for everyone</b>: whoever is near you sees the same jinn in the same places. You're at the center — as you move, the radar follows your GPS and the world drifts by.",startBtn:"📡 Start the sonar",startHint:"allow location — the radar will follow you",contacts:"Contacts:",strong:"Strong:",speed:"Speed:",kmh:"km/h",waitGps:"🛰️ waiting for GPS…",tracking:"🛰️ tracking you",gpsUnavail:"🛰️ GPS unavailable",soundOn:"🔊 Sound on",soundOff:"🔇 Sound off",radius:"Radar range:",unitM:"m",unitKm:"km",gpsTest:"GPS test",stWait:"waiting for permission…",stFirst:"waiting for first fix…",stFrozen:"no fresh fixes — GPS is stuck",stLowAcc:"low accuracy",stOk:"GPS is working ✅",hintFrozen:"iPhone: Settings → Privacy → Location Services → Safari → turn ON “Precise Location”; keep the tab open and the screen on.",hintLowAcc:"Turn ON precise location — your phone is giving an approximate position, so while moving it looks like you're standing still.",hintOk:"Walk or drive — “Distance” grows and the jinn shift. For clarity pick the 300 m range.",hintErr:"Allow location access for the site (in the address bar / Safari settings).",lblCoord:"Coordinates",lblAcc:"Accuracy",lblSpeed:"Speed",lblFixes:"GPS updates",lblDist:"Distance",lblLastFix:"Last fix",ago:"s ago",logContact:"CONTACT",muslim:"believer",kafir:"unbeliever",azimuth:"azimuth",N:"N",S:"S",E:"E",W:"W",you:"YOU",usefulLabel:"About jinn:",allArticles:"All articles →",t_jinn:"Jinn",t_shaytan:"Shaytan",t_ghoul:"Ghoul",t_ifrit:"Ifrit",t_marid:"Marid"},
+uz:{tag:"SONAR",onEarth:"jin Yer yuzida · umumiy jonli hisoblagich",h1:"Jinlar sonari 📡🔮",lead:"Jinlar dunyosi <b>hamma uchun yagona</b>: yoningdagi odam ham xuddi shu joylarda xuddi shu jinlarni koʻradi. Sen markazdasan — harakatlansang, radar GPS orqali kuzatadi va dunyo yoningdan oʻtadi.",startBtn:"📡 Sonarni yoqish",startHint:"geolokatsiyaga ruxsat ber — radar seni kuzatadi",contacts:"Kontaktlar:",strong:"Kuchli:",speed:"Tezlik:",kmh:"km/soat",waitGps:"🛰️ GPS kutilmoqda…",tracking:"🛰️ seni kuzatyapman",gpsUnavail:"🛰️ GPS mavjud emas",soundOn:"🔊 Ovoz yoniq",soundOff:"🔇 Ovoz oʻchiq",radius:"Radar radiusi:",unitM:"m",unitKm:"km",gpsTest:"GPS-tekshiruv",stWait:"ruxsat kutilmoqda…",stOk:"GPS ishlayapti ✅",lblCoord:"Koordinatalar",lblAcc:"Aniqlik",lblSpeed:"Tezlik",lblFixes:"GPS yangilanishlari",lblDist:"Bosib oʻtildi",lblLastFix:"Oxirgi fiks",ago:"s oldin",logContact:"KONTAKT",muslim:"musulmon",kafir:"kofir",azimuth:"azimut",N:"Shm",S:"Jnb",E:"Shr",W:"Grb",you:"SEN",usefulLabel:"Jinlar haqida:",allArticles:"Barcha maqolalar →",t_jinn:"Jin",t_shaytan:"Shayton",t_ghoul:"Gʻul",t_ifrit:"Ifrit",t_marid:"Morid"},
+ar:{tag:"سونار",onEarth:"جني على الأرض · عدّاد حي مشترك",h1:"سونار الجن 📡🔮",lead:"عالم الجن <b>واحد للجميع</b>: من بجانبك يرى الجن أنفسهم في المواضع نفسها. أنت في المركز — وعندما تتحرك يتتبعك الرادار عبر GPS ويمرّ العالم من حولك.",startBtn:"📡 تشغيل السونار",startHint:"اسمح بالموقع — سيتتبعك الرادار",contacts:"جهات الاتصال:",strong:"أقوياء:",speed:"السرعة:",kmh:"كم/س",waitGps:"🛰️ بانتظار GPS…",tracking:"🛰️ أتتبعك",gpsUnavail:"🛰️ GPS غير متاح",soundOn:"🔊 الصوت يعمل",soundOff:"🔇 الصوت متوقف",radius:"نطاق الرادار:",unitM:"م",unitKm:"كم",gpsTest:"اختبار GPS",stWait:"بانتظار الإذن…",stOk:"GPS يعمل ✅",lblCoord:"الإحداثيات",lblAcc:"الدقة",lblSpeed:"السرعة",lblFixes:"تحديثات GPS",lblDist:"المسافة",lblLastFix:"آخر تحديد",ago:"ث مضت",logContact:"اتصال",muslim:"مؤمن",kafir:"كافر",azimuth:"سمت",N:"شم",S:"جن",E:"شر",W:"غر",you:"أنت",usefulLabel:"عن الجن:",allArticles:"كل المقالات →",t_jinn:"جنّي",t_shaytan:"شيطان",t_ghoul:"غول",t_ifrit:"عفريت",t_marid:"مارد"},
+tr:{tag:"SONAR",onEarth:"cin Dünya'da · ortak canlı sayaç",h1:"Cin Sonarı 📡🔮",lead:"Cinlerin dünyası <b>herkes için ortaktır</b>: yanındaki kişi de aynı cinleri aynı yerlerde görür. Sen merkezdesin — hareket ettikçe radar seni GPS ile takip eder ve dünya yanından akıp geçer.",startBtn:"📡 Sonarı başlat",startHint:"konuma izin ver — radar seni takip edecek",contacts:"Temaslar:",strong:"Güçlü:",speed:"Hız:",kmh:"km/s",waitGps:"🛰️ GPS bekleniyor…",tracking:"🛰️ seni izliyorum",gpsUnavail:"🛰️ GPS yok",soundOn:"🔊 Ses açık",soundOff:"🔇 Ses kapalı",radius:"Radar menzili:",unitM:"m",unitKm:"km",gpsTest:"GPS testi",stWait:"izin bekleniyor…",stOk:"GPS çalışıyor ✅",lblCoord:"Koordinatlar",lblAcc:"Doğruluk",lblSpeed:"Hız",lblFixes:"GPS güncellemeleri",lblDist:"Mesafe",lblLastFix:"Son sabitleme",ago:"sn önce",logContact:"TEMAS",muslim:"mümin",kafir:"kâfir",azimuth:"azimut",N:"K",S:"G",E:"D",W:"B",you:"SEN",usefulLabel:"Cinler hakkında:",allArticles:"Tüm makaleler →",t_jinn:"Cin",t_shaytan:"Şeytan",t_ghoul:"Gulyabani",t_ifrit:"İfrit",t_marid:"Marid"},
+fa:{tag:"سونار",onEarth:"جن روی زمین · شمارندهٔ زندهٔ مشترک",h1:"سونار جن 📡🔮",lead:"دنیای جن‌ها <b>برای همه یکی است</b>: هرکس نزدیک توست همان جن‌ها را در همان مکان‌ها می‌بیند. تو در مرکزی — وقتی حرکت می‌کنی رادار با GPS دنبالت می‌کند و دنیا از کنارت می‌گذرد.",startBtn:"📡 روشن‌کردن سونار",startHint:"به موقعیت مکانی اجازه بده — رادار دنبالت می‌کند",contacts:"تماس‌ها:",strong:"قوی:",speed:"سرعت:",kmh:"کیلومتر/ساعت",waitGps:"🛰️ در انتظار GPS…",tracking:"🛰️ دنبالت می‌کنم",gpsUnavail:"🛰️ GPS در دسترس نیست",soundOn:"🔊 صدا روشن",soundOff:"🔇 صدا خاموش",radius:"برد رادار:",unitM:"م",unitKm:"کم",gpsTest:"تست GPS",stWait:"در انتظار اجازه…",stOk:"GPS کار می‌کند ✅",lblCoord:"مختصات",lblAcc:"دقت",lblSpeed:"سرعت",lblFixes:"به‌روزرسانی‌های GPS",lblDist:"مسافت",lblLastFix:"آخرین موقعیت",ago:"ث پیش",logContact:"تماس",muslim:"مؤمن",kafir:"کافر",azimuth:"سمت",N:"ش",S:"ج",E:"خ",W:"غ",you:"تو",usefulLabel:"دربارهٔ جن:",allArticles:"همهٔ مقاله‌ها →",t_jinn:"جن",t_shaytan:"شیطان",t_ghoul:"غول",t_ifrit:"عفریت",t_marid:"مارد"},
+ur:{tag:"سونار",onEarth:"جن زمین پر · مشترکہ لائیو کاؤنٹر",h1:"جن سونار 📡🔮",lead:"جنات کی دنیا <b>سب کے لیے ایک ہے</b>: جو آپ کے قریب ہے وہ بھی وہی جنات انہی جگہوں پر دیکھتا ہے۔ آپ مرکز میں ہیں — چلتے ہوئے ریڈار GPS سے آپ کا پیچھا کرتا ہے اور دنیا گزرتی جاتی ہے۔",startBtn:"📡 سونار چلائیں",startHint:"مقام کی اجازت دیں — ریڈار آپ کا پیچھا کرے گا",contacts:"رابطے:",strong:"طاقتور:",speed:"رفتار:",kmh:"کلومیٹر/گھنٹہ",waitGps:"🛰️ GPS کا انتظار…",tracking:"🛰️ آپ کا پیچھا کر رہا ہوں",gpsUnavail:"🛰️ GPS دستیاب نہیں",soundOn:"🔊 آواز آن",soundOff:"🔇 آواز آف",radius:"ریڈار کی رینج:",unitM:"میٹر",unitKm:"کلومیٹر",gpsTest:"GPS ٹیسٹ",stWait:"اجازت کا انتظار…",stOk:"GPS کام کر رہا ہے ✅",lblCoord:"کوآرڈینیٹس",lblAcc:"درستگی",lblSpeed:"رفتار",lblFixes:"GPS اپڈیٹس",lblDist:"طے شدہ فاصلہ",lblLastFix:"آخری فکس",ago:"س پہلے",logContact:"رابطہ",muslim:"مومن",kafir:"کافر",azimuth:"سمت",N:"ش",S:"ج",E:"م",W:"غ",you:"آپ",usefulLabel:"جنات کے بارے میں:",allArticles:"تمام مضامین →",t_jinn:"جن",t_shaytan:"شیطان",t_ghoul:"غول",t_ifrit:"عفریت",t_marid:"مارد"},
+id:{tag:"SONAR",onEarth:"jin di Bumi · penghitung langsung bersama",h1:"Sonar Jin 📡🔮",lead:"Dunia jin <b>sama untuk semua</b>: siapa pun yang dekat denganmu melihat jin yang sama di tempat yang sama. Kamu di tengah — saat bergerak, radar mengikutimu lewat GPS dan dunia melintas.",startBtn:"📡 Nyalakan sonar",startHint:"izinkan lokasi — radar akan mengikutimu",contacts:"Kontak:",strong:"Kuat:",speed:"Kecepatan:",kmh:"km/j",waitGps:"🛰️ menunggu GPS…",tracking:"🛰️ mengikutimu",gpsUnavail:"🛰️ GPS tidak tersedia",soundOn:"🔊 Suara nyala",soundOff:"🔇 Suara mati",radius:"Jangkauan radar:",unitM:"m",unitKm:"km",gpsTest:"Tes GPS",stWait:"menunggu izin…",stOk:"GPS berfungsi ✅",lblCoord:"Koordinat",lblAcc:"Akurasi",lblSpeed:"Kecepatan",lblFixes:"Pembaruan GPS",lblDist:"Jarak",lblLastFix:"Fix terakhir",ago:"dtk lalu",logContact:"KONTAK",muslim:"mukmin",kafir:"kafir",azimuth:"azimut",N:"U",S:"S",E:"T",W:"B",you:"KAMU",usefulLabel:"Tentang jin:",allArticles:"Semua artikel →",t_jinn:"Jin",t_shaytan:"Setan",t_ghoul:"Gul",t_ifrit:"Ifrit",t_marid:"Marid"}
+};
+const RTL={ar:1,fa:1,ur:1,ps:1,he:1};
+function pickLang(){try{var q=new URLSearchParams(location.search).get('lang');
+  if(q){localStorage.setItem('jr_lang',q);return q;}var s=localStorage.getItem('jr_lang');if(s)return s;}catch(e){}return 'ru';}
+const LANG=pickLang();
+function T(k){var c=I18N[LANG];return (c&&c[k]!=null)?c[k]:(I18N.en[k]!=null?I18N.en[k]:I18N.ru[k]);}
+(function(){document.documentElement.lang=LANG;document.documentElement.dir=RTL[LANG]?'rtl':'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(function(el){var v=T(el.getAttribute('data-i18n'));if(v!=null)el.textContent=v;});
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){var v=T(el.getAttribute('data-i18n-html'));if(v!=null)el.innerHTML=v;});
+  var sel=document.getElementById('langSel');if(sel){for(var i=0;i<sel.options.length;i++){if(sel.options[i].value==='/?lang='+LANG)sel.selectedIndex=i;}}
+})();
 
 /* ================= ЕДИНЫЙ СЧЁТЧИК (одинаков у всех, растёт от времени) =================
    pop = 8 млрд + прирост от фиксированной даты. Зависит только от UTC-времени,
@@ -263,12 +287,13 @@ function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a
   t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
 
 const TYPES=[
-  {nm:'Джинн', emoji:'🧞',strong:false,w:50},
-  {nm:'Шайтан',emoji:'😈',strong:false,w:16},
-  {nm:'Гуль',  emoji:'👻',strong:false,w:14},
-  {nm:'Ифрит', emoji:'🔥',strong:true, w:12},
-  {nm:'Марид', emoji:'🌀',strong:true, w:8},
+  {key:'jinn',   emoji:'🧞',strong:false,w:50},
+  {key:'shaytan',emoji:'😈',strong:false,w:16},
+  {key:'ghoul',  emoji:'👻',strong:false,w:14},
+  {key:'ifrit',  emoji:'🔥',strong:true, w:12},
+  {key:'marid',  emoji:'🌀',strong:true, w:8},
 ];
+function typeName(t){return T('t_'+t.key);}
 const TW=TYPES.reduce((s,t)=>s+t.w,0);
 function pickTypeR(rnd){let x=rnd()*TW;for(const t of TYPES){if((x-=t.w)<0)return t}return TYPES[0]}
 const NAMES=['Зубайр','Харис','Даджал','Самум','Азазиль','Хабиб','Малик','Джафар','Сакар','Рахим',
@@ -279,7 +304,7 @@ let RANGE=1;                    // радиус радара, км (меняет
 const STEP=0.001;               // клетка мира ~0.001° (≈75–110 м) — плотность выше
 const DRAW_CAP=150;             // максимум одновременно рисуемых джиннов (ближайшие)
 const toRad=d=>d*Math.PI/180, toDeg=r=>r*180/Math.PI;
-function fmtKm(k){return k<1?Math.round(k*1000)+' м':k.toFixed(2)+' км';}
+function fmtKm(k){return k<1?Math.round(k*1000)+' '+T('unitM'):k.toFixed(2)+' '+T('unitKm');}
 function haversineKm(la1,ln1,la2,ln2){const R=6371,dLa=toRad(la2-la1),dLn=toRad(ln2-ln1);
   const a=Math.sin(dLa/2)**2+Math.cos(toRad(la1))*Math.cos(toRad(la2))*Math.sin(dLn/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
 function bearingRad(la1,ln1,la2,ln2){const y=Math.sin(toRad(ln2-ln1))*Math.cos(toRad(la2));
@@ -345,17 +370,17 @@ function drawGrid(){ctx.save();const g=ctx.createRadialGradient(cx,cy,R*0.05,cx,
   ctx.fillStyle='rgba(34,255,155,0.4)';ctx.font=`${9*dpr}px Consolas,monospace`;ctx.textAlign='left';ctx.textBaseline='middle';
   for(let i=1;i<=4;i++)ctx.fillText(fmtKm(RANGE*i/4),cx+3*dpr,cy-R*i/4);
   ctx.fillStyle='rgba(34,255,155,0.6)';ctx.font=`${12*dpr}px Consolas,monospace`;ctx.textAlign='center';
-  ctx.fillText('С',cx,cy-R+11*dpr);ctx.fillText('Ю',cx,cy+R-11*dpr);ctx.fillText('В',cx+R-11*dpr,cy);ctx.fillText('З',cx-R+11*dpr,cy);ctx.restore();}
+  ctx.fillText(T('N'),cx,cy-R+11*dpr);ctx.fillText(T('S'),cx,cy+R-11*dpr);ctx.fillText(T('E'),cx+R-11*dpr,cy);ctx.fillText(T('W'),cx-R+11*dpr,cy);ctx.restore();}
 function drawSweep(){ctx.save();ctx.translate(cx,cy);const steps=42,span=Math.PI*0.62;
   for(let i=0;i<steps;i++){const a=sweep-(i/steps)*span,al=(1-i/steps)*0.22;ctx.strokeStyle=`rgba(34,255,155,${al})`;ctx.lineWidth=2*dpr;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*R,Math.sin(a)*R);ctx.stroke();}
   ctx.strokeStyle=G;ctx.lineWidth=2.5*dpr;ctx.shadowColor=G;ctx.shadowBlur=14*dpr;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(sweep)*R,Math.sin(sweep)*R);ctx.stroke();ctx.restore();}
 function drawCenter(){ctx.save();const pr=(Math.sin(Date.now()/380)*0.5+0.5);ctx.fillStyle=G;ctx.shadowColor=G;ctx.shadowBlur=16*dpr;
   ctx.beginPath();ctx.arc(cx,cy,4.5*dpr,0,7);ctx.fill();ctx.strokeStyle=`rgba(34,255,155,${0.5-pr*0.4})`;ctx.lineWidth=2*dpr;ctx.shadowBlur=0;
-  ctx.beginPath();ctx.arc(cx,cy,(8+pr*10)*dpr,0,7);ctx.stroke();ctx.fillStyle='rgba(34,255,155,0.85)';ctx.font=`${10*dpr}px Consolas,monospace`;ctx.textAlign='center';ctx.fillText('ТЫ',cx,cy+18*dpr);ctx.restore();}
+  ctx.beginPath();ctx.arc(cx,cy,(8+pr*10)*dpr,0,7);ctx.stroke();ctx.fillStyle='rgba(34,255,155,0.85)';ctx.font=`${10*dpr}px Consolas,monospace`;ctx.textAlign='center';ctx.fillText(T('you'),cx,cy+18*dpr);ctx.restore();}
 function angDiff(a,b){let d=(a-b)%(Math.PI*2);if(d<-Math.PI)d+=Math.PI*2;if(d>Math.PI)d-=Math.PI*2;return d}
 
 let logQ=[],lastLog=0;
-function pushLog(b,km,brgDeg){logQ.unshift(`<div class="ln">▸ КОНТАКТ: <b>${b.t.emoji} ${b.name}</b> · ${b.t.nm} · ${b.muslim?'муслим':'кафир'} · азимут ${brgDeg}° · ${km.toFixed(2)} км</div>`);
+function pushLog(b,km,brgDeg){logQ.unshift(`<div class="ln">▸ ${T('logContact')}: <b>${b.t.emoji} ${b.name}</b> · ${typeName(b.t)} · ${b.muslim?T('muslim'):T('kafir')} · ${T('azimuth')} ${brgDeg}° · ${km.toFixed(2)} ${T('unitKm')}</div>`);
   if(logQ.length>7)logQ.pop();document.getElementById('log').innerHTML=logQ.join('');}
 
 function drawBlips(){
@@ -415,27 +440,27 @@ function onFix(p){
   let s=Math.max(0,spd||0); if(s>250)s=user.speed; user.speed=user.speed?user.speed*0.6+s*0.4:s;
   user.lat=la; user.lng=ln; user.haveFix=true; prevFix={la,ln,t:tnow};
   if(genLat==null||haversineKm(genLat,genLng,la,ln)>Math.max(0.03,RANGE*0.25)) regen();
-  const trk=el('trk'); trk.classList.add('live'); trk.textContent='🛰️ слежу за тобой';
+  const trk=el('trk'); trk.classList.add('live'); trk.textContent=T('tracking');
   el('gcoord').textContent=la.toFixed(5)+', '+ln.toFixed(5);
-  el('gacc').textContent=Math.round(acc)+' м';
-  el('gspd').textContent=(user.speed||0).toFixed(1)+' км/ч';
+  el('gacc').textContent=Math.round(acc)+' '+T('unitM');
+  el('gspd').textContent=(user.speed||0).toFixed(1)+' '+T('kmh');
   el('gfix').textContent=gps.fixes;
-  el('gdist').textContent=(gps.dist<1000?Math.round(gps.dist)+' м':(gps.dist/1000).toFixed(2)+' км');
+  el('gdist').textContent=(gps.dist<1000?Math.round(gps.dist)+' '+T('unitM'):(gps.dist/1000).toFixed(2)+' '+T('unitKm'));
   refreshGpsStatus();
 }
 function refreshGpsStatus(){
   const age=gps.lastMs?Math.round((Date.now()-gps.lastMs)/1000):null;
-  el('gage').textContent = age==null?'—':(age+' с назад');
+  el('gage').textContent = age==null?'—':(age+' '+T('ago'));
   const hint=el('ghint');
-  if(!gps.fixes){ setStatus('mid','жду первый фикс…'); hint.textContent=''; return; }
-  if(age!=null && age>12){ setStatus('bad','нет свежих фиксов — GPS «завис»');
-    hint.textContent='iPhone: Настройки → Конфиденциальность → Службы геолокации → Safari → «Точная геопозиция» ВКЛ; держи вкладку открытой и экран включённым.'; return; }
-  if(gps.acc!=null && gps.acc>120){ setStatus('mid','низкая точность ('+Math.round(gps.acc)+' м)');
-    hint.textContent='Включи ТОЧНУЮ геолокацию — сейчас телефон даёт приблизительную позицию, поэтому в движении кажется, что стоишь на месте.'; return; }
-  setStatus('ok','GPS работает ✅'); hint.textContent='Идёшь/едешь — «Пройдено» растёт, джинны смещаются. Для наглядности выбери радиус 300 м.';
+  if(!gps.fixes){ setStatus('mid',T('stFirst')); hint.textContent=''; return; }
+  if(age!=null && age>12){ setStatus('bad',T('stFrozen'));
+    hint.textContent=T('hintFrozen'); return; }
+  if(gps.acc!=null && gps.acc>120){ setStatus('mid',T('stLowAcc')+' ('+Math.round(gps.acc)+' '+T('unitM')+')');
+    hint.textContent=T('hintLowAcc'); return; }
+  setStatus('ok',T('stOk')); hint.textContent=T('hintOk');
 }
-function onErr(e){ setStatus('bad','GPS недоступен'); el('trk').textContent='🛰️ GPS недоступен';
-  el('ghint').textContent='Разреши доступ к геолокации для сайта (в адресной строке/настройках Safari).';
+function onErr(e){ setStatus('bad',T('gpsUnavail').replace('🛰️ ','')); el('trk').textContent=T('gpsUnavail');
+  el('ghint').textContent=T('hintErr');
   if(genLat==null) regen(); }
 function startTracking(){
   if(!navigator.geolocation){ onErr(); return; }
@@ -447,7 +472,7 @@ function startTracking(){
 function startRadar(){resize();if(genLat==null)regen();running=true;last=performance.now();requestAnimationFrame(frame);}
 document.getElementById('startlay').addEventListener('click',function(){this.classList.add('hide');
   initAudio();if(actx&&actx.state==='suspended')actx.resume();startTracking();startRadar();});
-document.getElementById('mute').addEventListener('click',function(){muted=!muted;this.textContent=muted?'🔇 Звук выкл':'🔊 Звук вкл';});
+document.getElementById('mute').addEventListener('click',function(){muted=!muted;this.textContent=muted?T('soundOff'):T('soundOn');});
 document.querySelectorAll('.rng').forEach(btn=>btn.addEventListener('click',function(){
   document.querySelectorAll('.rng').forEach(b=>b.classList.remove('on'));
   this.classList.add('on'); RANGE=parseFloat(this.dataset.km); regen();
