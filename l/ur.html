@@ -121,11 +121,12 @@
 </div>
 <script>document.getElementById('y').textContent=new Date().getFullYear();</script>
 <script>(function(){var b=document.getElementById('shareBtn');if(!b)return;var t=b.textContent,ok=b.getAttribute('data-copied');
-b.addEventListener('click',function(){var d={title:document.title,text:document.querySelector('meta[name=description]').content,url:location.href};
+var su=(function(){try{var u=new URL(location.href);u.searchParams.set('utm_source','share');u.searchParams.set('utm_medium','viral');u.searchParams.set('utm_campaign','landing');return u.href;}catch(e){return location.href;}})();
+b.addEventListener('click',function(){var d={title:document.title,text:document.querySelector('meta[name=description]').content,url:su};
 if(navigator.share){navigator.share(d).catch(function(){});return;}
 var done=function(){b.textContent=ok;setTimeout(function(){b.textContent=t;},2000);};
-if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(location.href).then(done,done);}
-else{var i=document.createElement('input');i.value=location.href;document.body.appendChild(i);i.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(i);done();}});})();</script>
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(su).then(done,done);}
+else{var i=document.createElement('input');i.value=su;document.body.appendChild(i);i.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(i);done();}});})();</script>
 <script>(function(){try{if(sessionStorage.getItem('jrh'))return;sessionStorage.setItem('jrh','1');var A='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3em1jaWh3dHdnamFqampzYm1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTQ0MzksImV4cCI6MjA5MTA3MDQzOX0.X4UnLTta5Pm70sOwZkwJgvA8EkQtJPDmsn-2dMlkqjA';fetch('https://zwzmcihwtwgjajjjsbms.supabase.co/rest/v1/rpc/jr_hit',{method:'POST',headers:{'apikey':A,'Authorization':'Bearer '+A,'Content-Type':'application/json'},body:'{}'});}catch(e){}})();</script>
 </body>
 </html>

@@ -332,9 +332,12 @@ function T(k){var c=I18N[LANG];return (c&&c[k]!=null)?c[k]:(I18N.en[k]!=null?I18
 
 /* ---------- «Поделиться» / «Позвать друга» (виральность): Web Share API + fallback на копирование ---------- */
 (function(){
-  var url=location.origin+'/?lang='+LANG;
-  var data={title:document.title,text:(I18N[LANG]&&I18N[LANG].lead?I18N[LANG].lead.replace(/<[^>]+>/g,''):document.title),url:url};
-  function wire(b,origKey){if(!b)return;var orig=T(origKey);
+  var base=location.origin+'/?lang='+LANG;
+  // UTM-метки для сквозной аналитики виральности (source различает «поделиться» и «позвать друга»)
+  function shareUrl(src){return base+'&utm_source='+src+'&utm_medium=viral&utm_campaign=share';}
+  var lead=(I18N[LANG]&&I18N[LANG].lead?I18N[LANG].lead.replace(/<[^>]+>/g,''):document.title);
+  function wire(b,origKey,src){if(!b)return;var orig=T(origKey);var url=shareUrl(src);
+    var data={title:document.title,text:lead,url:url};
     function copied(){b.textContent=T('shareCopied');setTimeout(function(){b.textContent=orig;},2000);}
     b.addEventListener('click',function(){
       if(navigator.share){navigator.share(data).catch(function(){});return;}
@@ -342,8 +345,8 @@ function T(k){var c=I18N[LANG];return (c&&c[k]!=null)?c[k]:(I18N.en[k]!=null?I18
       else{var i=document.createElement('input');i.value=url;document.body.appendChild(i);i.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(i);copied();}
     });
   }
-  wire(document.getElementById('shareBtn'),'share');
-  wire(document.getElementById('inviteBtn'),'inviteBtn');
+  wire(document.getElementById('shareBtn'),'share','share');
+  wire(document.getElementById('inviteBtn'),'inviteBtn','invite');
 })();
 
 /* ---------- PWA: установка на телефон + оффлайн-кеш (возвраты) ---------- */
