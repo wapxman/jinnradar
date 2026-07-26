@@ -330,6 +330,26 @@ function T(k){var c=I18N[LANG];return (c&&c[k]!=null)?c[k]:(I18N.en[k]!=null?I18
   var ogu=document.querySelector('meta[property="og:url"]');if(ogu)ogu.setAttribute('content',u);
 })();
 
+/* ---------- PWA-манифест под язык: локализуем name/description/lang/dir при ?lang= ----------
+   Русский оставляем на статическом /manifest.webmanifest. Для остальных языков берём базовый
+   манифест (единый источник иконок/скриншотов) и подменяем name/description из уже переведённых
+   строк h1/lead (нулевой риск перевода), затем отдаём его как blob-манифест того же origin.
+   Повышает конверсию установки PWA на нерусских рынках. Полностью аддитивно и обратимо. */
+(function(){
+  if(LANG==='ru')return;
+  if(!window.Blob||!window.URL||!URL.createObjectURL||!window.fetch)return;
+  var link=document.querySelector('link[rel="manifest"]');if(!link)return;
+  function strip(s){return String(s==null?'':s).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();}
+  fetch('/manifest.webmanifest').then(function(r){return r.json();}).then(function(m){
+    var name=strip(T('h1'));if(name)m.name=name;
+    var desc=strip(T('lead'));if(desc)m.description=desc;
+    m.lang=LANG;m.dir=RTL[LANG]?'rtl':'ltr';
+    m.start_url='/?lang='+LANG+'&utm_source=pwa';
+    var blob=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
+    link.setAttribute('href',URL.createObjectURL(blob));
+  }).catch(function(){});
+})();
+
 /* ---------- «Поделиться» / «Позвать друга» (виральность): Web Share API + fallback на копирование ---------- */
 (function(){
   var base=location.origin+'/?lang='+LANG;
