@@ -69,6 +69,22 @@ LANGS = {
 "ku": ("Kurdî","ltr","Radara Cinan — çend cin li nêzîkî te ne, serhêl","Radara cinan a serhêl: bi GPSa te cinên li dora te wek sonarê nîşan dide, bi hejmêra cîhanî ya zindî. Projeyeke şahiyê li ser bingeha folklora îslamî.","Radara Cinan — niha kî li nêzîkî te ye?","JinnRadar radareke serhêl e ku bi cihê te cinên li dora te wek sonara keştiya binê avê nîşan dide — bi şopandin, deng û hejmêrek cîhanî ya zindî.","Ev projeyeke şahiyê ye ku ji folklora îslamî îlham girtiye. Li ser telefona xwe veke û bibîne ka niha çend cin li nêzîkî te ne.","📡 Radarê veke"),
 }
 
+# Метки кнопки «Поделиться» (fallback → en). Для распространения (виральность).
+SHARE = {
+"en":("📤 Share","Link copied ✅"),"ru":("📤 Поделиться","Ссылка скопирована ✅"),
+"uz":("📤 Ulashish","Havola nusxalandi ✅"),"ar":("📤 مشاركة","تم نسخ الرابط ✅"),
+"tr":("📤 Paylaş","Bağlantı kopyalandı ✅"),"fa":("📤 اشتراک‌گذاری","لینک کپی شد ✅"),
+"ur":("📤 شیئر کریں","لنک کاپی ہو گیا ✅"),"id":("📤 Bagikan","Tautan disalin ✅"),
+"az":("📤 Paylaş","Keçid kopyalandı ✅"),"kk":("📤 Бөлісу","Сілтеме көшірілді ✅"),
+"ky":("📤 Бөлүшүү","Шилтеме көчүрүлдү ✅"),"tg":("📤 Мубодила","Пайванд нусхабардорӣ шуд ✅"),
+"tk":("📤 Paýlaş","Salgy göçürildi ✅"),"ps":("📤 شریکول","لینک کاپي شو ✅"),
+"hi":("📤 शेयर करें","लिंक कॉपी हो गया ✅"),"bn":("📤 শেয়ার","লিঙ্ক কপি হয়েছে ✅"),
+"ms":("📤 Kongsi","Pautan disalin ✅"),"es":("📤 Compartir","Enlace copiado ✅"),
+"fr":("📤 Partager","Lien copié ✅"),"de":("📤 Teilen","Link kopiert ✅"),
+"pt":("📤 Partilhar","Ligação copiada ✅"),"sw":("📤 Shiriki","Kiungo kimenakiliwa ✅"),
+"ha":("📤 Raba","An kwafi mahaɗi ✅"),
+}
+
 TPL = """<!doctype html>
 <html lang="{code}" dir="{dir}">
 <head>
@@ -93,6 +109,8 @@ TPL = """<!doctype html>
   h1{{font-size:27px;text-shadow:0 0 14px #22ff9b33;margin:20px 0 10px}}
   p{{color:#bfe9d4;font-size:17px}}
   .cta{{display:block;text-align:center;background:linear-gradient(135deg,#22ff9b,#12b98a);color:#04120c;font-weight:800;padding:18px;border-radius:14px;margin:26px 0;font-size:18px;box-shadow:0 8px 30px #25e0a355}}
+  .share{{display:block;width:100%;text-align:center;background:transparent;color:#22ff9b;border:1px solid #22ff9b;font-weight:700;padding:14px;border-radius:14px;margin:-12px 0 20px;font-size:16px;cursor:pointer;font-family:inherit}}
+  .share:hover{{background:#0a2418}}
   .langs{{border-top:1px solid #0f4d34;margin-top:26px;padding-top:14px;font-size:13px;line-height:2.2;color:#7fbfa0}}
   .langs a{{color:#8fd9bb;margin-inline-end:6px}}
   footer{{border-top:1px solid #0f4d34;margin-top:18px;padding:16px 0;color:#5fae86;font-size:12px}}
@@ -105,10 +123,17 @@ TPL = """<!doctype html>
 <p>{p1}</p>
 <p>{p2}</p>
 <a class="cta" href="{site}">{cta}</a>
+<button class="share" id="shareBtn" data-copied="{share_ok}">{share}</button>
 <div class="langs"><b style="color:#c8ffe6">🌍 Languages:</b><br>{switch}</div>
 <footer>© <span id="y"></span> JinnRadar</footer>
 </div>
 <script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+<script>(function(){{var b=document.getElementById('shareBtn');if(!b)return;var t=b.textContent,ok=b.getAttribute('data-copied');
+b.addEventListener('click',function(){{var d={{title:document.title,text:document.querySelector('meta[name=description]').content,url:location.href}};
+if(navigator.share){{navigator.share(d).catch(function(){{}});return;}}
+var done=function(){{b.textContent=ok;setTimeout(function(){{b.textContent=t;}},2000);}};
+if(navigator.clipboard&&navigator.clipboard.writeText){{navigator.clipboard.writeText(location.href).then(done,done);}}
+else{{var i=document.createElement('input');i.value=location.href;document.body.appendChild(i);i.select();try{{document.execCommand('copy');}}catch(e){{}}document.body.removeChild(i);done();}}}});}})();</script>
 <script>(function(){{try{{if(sessionStorage.getItem('jrh'))return;sessionStorage.setItem('jrh','1');var A='{anon}';fetch('https://zwzmcihwtwgjajjjsbms.supabase.co/rest/v1/rpc/jr_hit',{{method:'POST',headers:{{'apikey':A,'Authorization':'Bearer '+A,'Content-Type':'application/json'}},body:'{{}}'}});}}catch(e){{}}}})();</script>
 </body>
 </html>
@@ -126,8 +151,10 @@ def build():
     switch = " · ".join(f'<a href="{SITE}l/{c}.html">{LANGS[c][0]}</a>' for c in codes)
     for c in codes:
         name, d, title, desc, h1, p1, p2, cta = LANGS[c]
+        sh, sh_ok = SHARE.get(c, SHARE["en"])
         html = TPL.format(code=c, dir=d, title=title, desc=desc, h1=h1, p1=p1, p2=p2,
-                          cta=cta, site=SITE, anon=ANON, alts=alts, switch=switch)
+                          cta=cta, site=SITE, anon=ANON, alts=alts, switch=switch,
+                          share=sh, share_ok=sh_ok)
         open(os.path.join(ldir, f"{c}.html"), "w", encoding="utf-8").write(html)
     # языковой хаб /l/index.html
     hub_cards = "\n".join(
