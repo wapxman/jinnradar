@@ -145,6 +145,24 @@ FAQ = {
 }
 
 
+# og:locale требует формат language_TERRITORY, иначе Facebook/соцсети его игнорируют
+# (для остальных языков территория = язык в верхнем регистре: de→de_DE, и т.п.).
+OG_TERRITORY = {
+"en":"US","pt":"BR","sv":"SE","zh-Hans":"CN","zh-Hant":"TW","ar":"SA","fa":"IR",
+"ur":"PK","hi":"IN","bn":"BD","uk":"UA","sr":"RS","he":"IL","ja":"JP","ko":"KR",
+"vi":"VN","ms":"MY","fil":"PH","sw":"KE","ha":"NG","el":"GR","cs":"CZ","da":"DK",
+"et":"EE","sq":"AL","ka":"GE","hy":"AM","ku":"TR","ps":"AF","ne":"NP","si":"LK",
+"my":"MM","km":"KH","uz":"UZ","kk":"KZ","ky":"KG","tg":"TJ","tk":"TM","az":"AZ",
+"bs":"BA","af":"ZA",
+}
+
+
+def og_locale(code):
+    base = code.split("-")[0]
+    terr = OG_TERRITORY.get(code) or OG_TERRITORY.get(base) or base.upper()
+    return f"{base}_{terr}"
+
+
 def faq_blocks(code):
     """Возвращает (visible_html, jsonld_script) для языка или ('','') если FAQ нет."""
     entry = FAQ.get(code)
@@ -175,11 +193,21 @@ TPL = """<!doctype html>
 <meta name="description" content="{desc}"/>
 <link rel="canonical" href="{site}l/{code}.html"/>
 <meta name="robots" content="index, follow"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="JinnRadar"/>
 <meta property="og:title" content="{h1}"/>
 <meta property="og:description" content="{desc}"/>
 <meta property="og:image" content="{site}og.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="{h1}"/>
 <meta property="og:url" content="{site}l/{code}.html"/>
-<meta property="og:locale" content="{code}"/>
+<meta property="og:locale" content="{og_locale}"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="{h1}"/>
+<meta name="twitter:description" content="{desc}"/>
+<meta name="twitter:image" content="{site}og.png"/>
+<meta name="twitter:image:alt" content="{h1}"/>
 {alts}
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3980078996117020" crossorigin="anonymous"></script>
 <script type="application/ld+json">{{"@context":"https://schema.org","@type":"WebApplication","name":"JinnRadar","inLanguage":"{code}","applicationCategory":"EntertainmentApplication","operatingSystem":"Web","offers":{{"@type":"Offer","price":"0"}},"url":"{site}l/{code}.html"}}</script>
@@ -243,7 +271,8 @@ def build():
         faq_section, faq_ld = faq_blocks(c)
         html = TPL.format(code=c, dir=d, title=title, desc=desc, h1=h1, p1=p1, p2=p2,
                           cta=cta, site=SITE, anon=ANON, alts=alts, switch=switch,
-                          share=sh, share_ok=sh_ok, faq_section=faq_section, faq_ld=faq_ld)
+                          share=sh, share_ok=sh_ok, faq_section=faq_section, faq_ld=faq_ld,
+                          og_locale=og_locale(c))
         open(os.path.join(ldir, f"{c}.html"), "w", encoding="utf-8").write(html)
     # языковой хаб /l/index.html
     hub_cards = "\n".join(
